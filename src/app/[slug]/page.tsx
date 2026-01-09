@@ -225,9 +225,9 @@ const BusinessPage = async ({ params }: BusinessPageProps) => {
         {/* Reviews Section */}
         <div className="px-4 py-4 mb-8">
           <h3 className="text-foreground text-lg font-bold mb-4">Reviews</h3>
-          <div className="flex flex-col gap-4 max-w-2xl">
+          <div className="flex flex-col md:flex-row gap-4">
             {business.reviews.map((review) => (
-              <div key={review.id} className="bg-muted p-4 rounded-xl relative">
+              <div key={review.id} className="bg-muted p-4 rounded-xl relative flex-1">
                 <div className="absolute top-4 right-4 text-border text-4xl leading-none">"</div>
                 <div className="flex gap-1 text-yellow-400 mb-2">
                   {[...Array(5)].map((_, i) => (

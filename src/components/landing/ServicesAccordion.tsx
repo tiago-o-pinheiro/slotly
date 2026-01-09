@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import type { Service } from '@/types/domain'
@@ -17,19 +17,19 @@ export const ServicesAccordion = ({ services, businessSlug }: ServicesAccordionP
   const searchParams = useSearchParams()
   const serviceParam = searchParams.get('service')
   const [openValue, setOpenValue] = useState<string | undefined>(serviceParam ?? undefined)
+  const hasScrolled = useRef(false)
 
-  // Handle deep-linking: open accordion item and scroll into view
   useEffect(() => {
-    if (serviceParam) {
+    if (serviceParam && !hasScrolled.current) {
       setOpenValue(serviceParam)
 
-      // Small delay to ensure DOM is ready
-      setTimeout(() => {
-        const element = document.getElementById(`service-${serviceParam}`)
-        if (element) {
+      const element = document.getElementById(`service-${serviceParam}`)
+      if (element) {
+        requestAnimationFrame(() => {
           element.scrollIntoView({ behavior: 'smooth', block: 'center' })
-        }
-      }, 100)
+          hasScrolled.current = true
+        })
+      }
     }
   }, [serviceParam])
 

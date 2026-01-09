@@ -34,22 +34,27 @@ export const ServicesAccordion = ({ services, businessSlug }: ServicesAccordionP
   }, [serviceParam])
 
   return (
-    <Accordion type="single" collapsible value={openValue} onValueChange={setOpenValue}>
+    <Accordion type="single" collapsible value={openValue} onValueChange={setOpenValue} className="space-y-3">
       {services.map((service) => (
-        <AccordionItem key={service.id} value={service.id} id={`service-${service.id}`}>
-          <AccordionTrigger className="px-4">
+        <AccordionItem
+          key={service.id}
+          value={service.id}
+          id={`service-${service.id}`}
+          className="border-0 bg-card rounded-lg overflow-hidden shadow-sm"
+        >
+          <AccordionTrigger className="px-6 hover:bg-card">
             <div className="flex flex-1 items-start justify-between gap-4 text-left">
               <div className="flex-1 min-w-0">
                 <h3 className="font-semibold text-foreground text-base md:text-lg">{service.name}</h3>
-                <div className="flex items-center gap-3 mt-1 text-sm text-foreground/70">
+                <div className="flex items-center gap-2 mt-1 text-sm text-muted-foreground">
                   <span>{formatDuration(service.durationMin)}</span>
-                  <span className="text-foreground/40">•</span>
-                  <span className="font-medium text-primary">{formatPrice(service.priceCents)}</span>
+                  <span>•</span>
+                  <span>{formatPrice(service.priceCents)}</span>
                 </div>
               </div>
             </div>
           </AccordionTrigger>
-          <AccordionContent className="px-4">
+          <AccordionContent className="px-6">
             <p className="text-foreground/80 text-sm md:text-base mb-3">{service.description}</p>
             {service.notes && (
               <p className="text-foreground/60 text-sm italic mb-4">{service.notes}</p>

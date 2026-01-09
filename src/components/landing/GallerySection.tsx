@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react'
 import Image from 'next/image'
 import * as AspectRatio from '@radix-ui/react-aspect-ratio'
 import type { GalleryImage } from '@/types/domain'
@@ -8,15 +7,13 @@ import {
   Dialog,
   DialogContent,
   DialogTrigger,
-} from '@/components/ui/Dialog'
+} from '@/components/ui/dialog'
 
 type GallerySectionProps = {
   gallery?: GalleryImage[]
 }
 
 export const GallerySection = ({ gallery }: GallerySectionProps) => {
-  const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null)
-
   if (!gallery || gallery.length === 0) {
     return null
   }
@@ -28,15 +25,13 @@ export const GallerySection = ({ gallery }: GallerySectionProps) => {
         <span className="text-sm text-foreground/50">Swipe to see</span>
       </div>
 
-      {/* Horizontal scroll carousel */}
       <div className="flex w-full overflow-x-auto no-scrollbar px-4 pb-2 gap-4 snap-x snap-mandatory">
         {gallery.map((image) => (
-          <Dialog key={image.id} onOpenChange={(open) => !open && setSelectedImage(null)}>
+          <Dialog key={image.id}>
             <DialogTrigger asChild>
               <button
                 type="button"
                 className="snap-start flex-none w-[280px] cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-xl overflow-hidden relative shadow-sm"
-                onClick={() => setSelectedImage(image)}
               >
                 <AspectRatio.Root ratio={4 / 3}>
                   <Image
@@ -52,20 +47,18 @@ export const GallerySection = ({ gallery }: GallerySectionProps) => {
                 </AspectRatio.Root>
               </button>
             </DialogTrigger>
-            {selectedImage?.id === image.id && (
-              <DialogContent className="max-w-4xl p-2">
-                <div className="relative w-full h-[70vh]">
-                  <Image
-                    src={selectedImage.src}
-                    alt={selectedImage.alt}
-                    fill
-                    className="object-contain"
-                    sizes="(max-width: 768px) 100vw, 80vw"
-                  />
-                </div>
-                <p className="text-sm text-foreground/70 text-center mt-2">{selectedImage.alt}</p>
-              </DialogContent>
-            )}
+            <DialogContent className="max-w-4xl p-2">
+              <div className="relative w-full h-[70vh]">
+                <Image
+                  src={image.src}
+                  alt={image.alt}
+                  fill
+                  className="object-contain"
+                  sizes="(max-width: 768px) 100vw, 80vw"
+                />
+              </div>
+              <p className="text-sm text-foreground/70 text-center mt-2">{image.alt}</p>
+            </DialogContent>
           </Dialog>
         ))}
       </div>

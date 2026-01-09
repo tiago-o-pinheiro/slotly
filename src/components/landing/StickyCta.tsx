@@ -1,9 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
 import { Calendar } from 'lucide-react'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/button'
 
 type StickyCtaProps = {
   businessSlug: string
@@ -29,28 +28,22 @@ export const StickyCta = ({ businessSlug, businessName }: StickyCtaProps) => {
   }
 
   return (
-    <AnimatePresence>
-      {isVisible && (
-        <motion.div
-          initial={{ y: 100, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: 100, opacity: 0 }}
-          transition={{ duration: 0.3, ease: 'easeOut' }}
-          className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-white/80 backdrop-blur-lg border-t border-border shadow-lg"
+    <div
+      className={`fixed bottom-0 left-0 right-0 z-50 p-4 bg-white/80 backdrop-blur-lg border-t border-border shadow-lg transition-all duration-300 ${
+        isVisible ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0 pointer-events-none'
+      }`}
+    >
+      <div className="max-w-[480px] mx-auto">
+        <Button
+          variant="solid"
+          size="lg"
+          onClick={handleClick}
+          className="w-full h-12 rounded-xl shadow-lg shadow-primary/30 flex items-center justify-center gap-2"
         >
-          <div className="max-w-[480px] mx-auto">
-            <Button
-              variant="solid"
-              size="lg"
-              onClick={handleClick}
-              className="w-full h-12 rounded-xl shadow-lg shadow-primary/30 flex items-center justify-center gap-2"
-            >
-              <Calendar className="w-5 h-5" />
-              Book Appointment
-            </Button>
-          </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+          <Calendar className="w-5 h-5" />
+          Book Appointment
+        </Button>
+      </div>
+    </div>
   )
 }

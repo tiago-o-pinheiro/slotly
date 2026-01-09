@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { Gift } from 'lucide-react'
 import type { Loyalty } from '@/types/domain'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { getLoyaltyStamps } from '@/lib/loyaltyStore'
 
 type LoyaltyCardProps = {

@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { Calendar, Zap, Shield, ArrowRight } from 'lucide-react'
-import { Button } from '@/components/ui/Button'
-import { Card, CardContent } from '@/components/ui/Card'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
 
 const HomePage = () => {
   return (

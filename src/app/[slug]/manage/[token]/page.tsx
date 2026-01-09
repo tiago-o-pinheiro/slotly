@@ -9,11 +9,11 @@ import { fetchBusinessBySlug } from '@/lib/business'
 import { addLoyaltyStamp } from '@/lib/loyaltyStore'
 import type { Booking } from '@/types/booking'
 import type { Business } from '@/types/domain'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
-import { Button } from '@/components/ui/Button'
-import { Badge } from '@/components/ui/Badge'
-import { Separator } from '@/components/ui/Separator'
-import { Skeleton } from '@/components/ui/Skeleton'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Separator } from '@/components/ui/separator'
+import { Skeleton } from '@/components/ui/skeleton'
 import { LoyaltyCard } from '@/components/booking/LoyaltyCard'
 import {
   Dialog,
@@ -22,7 +22,7 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogClose,
-} from '@/components/ui/Dialog'
+} from '@/components/ui/dialog'
 import { formatPrice, formatDuration } from '@/lib/format'
 
 const ManageBookingPage = () => {
@@ -299,7 +299,7 @@ const ManageBookingPage = () => {
               <Separator className="my-4" />
 
               <Button asChild variant="ghost" size="md" className="w-full">
-                <Link href={`/${business.slug}/f/${booking.token}`} className="gap-2">
+                <Link href={`/${business.slug}/feedback/${booking.token}`} className="gap-2">
                   <Star className="w-4 h-4" />
                   Rate your visit
                 </Link>

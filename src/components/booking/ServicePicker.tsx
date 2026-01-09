@@ -3,8 +3,8 @@
 import { useRouter } from 'next/navigation'
 import type { Service } from '@/types/domain'
 import { formatPrice, formatDuration } from '@/lib/format'
-import { Card, CardContent } from '@/components/ui/Card'
-import { Button } from '@/components/ui/Button'
+import { Card, CardContent } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
 
 type ServicePickerProps = {
   services: Service[]

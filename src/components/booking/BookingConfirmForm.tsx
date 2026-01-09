@@ -3,8 +3,8 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { z } from 'zod'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
-import { Button } from '@/components/ui/Button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
 import { createBooking } from '@/lib/bookingStore'
 
 const customerSchema = z.object({
@@ -21,6 +21,33 @@ type BookingConfirmFormProps = {
   serviceId: string
 }
 
+type FormFieldProps = {
+  id: keyof CustomerInput
+  label: string
+  type: string
+  required?: boolean
+  value: string
+  error?: string
+  onChange: (value: string) => void
+}
+
+const FormField = ({ id, label, type, required, value, error, onChange }: FormFieldProps) => (
+  <div>
+    <label htmlFor={id} className="block text-sm font-medium text-foreground mb-1">
+      {label} {required && <span className="text-primary">*</span>}
+    </label>
+    <input
+      type={type}
+      id={id}
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className="w-full px-3 py-2 border border-border rounded-brand bg-surface text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+      required={required}
+    />
+    {error && <p className="text-sm text-red-500 mt-1">{error}</p>}
+  </div>
+)
+
 export const BookingConfirmForm = ({ businessId, businessSlug, serviceId }: BookingConfirmFormProps) => {
   const router = useRouter()
   const [formData, setFormData] = useState<CustomerInput>({
@@ -31,6 +58,10 @@ export const BookingConfirmForm = ({ businessId, businessSlug, serviceId }: Book
   const [errors, setErrors] = useState<Partial<Record<keyof CustomerInput, string>>>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
 
+  const updateField = (field: keyof CustomerInput) => (value: string) => {
+    setFormData({ ...formData, [field]: value })
+  }
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     setErrors({})
@@ -39,7 +70,6 @@ export const BookingConfirmForm = ({ businessId, businessSlug, serviceId }: Book
     try {
       const validated = customerSchema.parse(formData)
 
-      // Mock date/time (2 days from now at 10:00 AM)
       const startDate = new Date()
       startDate.setDate(startDate.getDate() + 2)
       startDate.setHours(10, 0, 0, 0)
@@ -55,7 +85,7 @@ export const BookingConfirmForm = ({ businessId, businessSlug, serviceId }: Book
         startDate.toISOString(),
       )
 
-      router.push(`/${businessSlug}/m/${booking.token}`)
+      router.push(`/${businessSlug}/manage/${booking.token}`)
     } catch (error) {
       if (error instanceof z.ZodError) {
         const fieldErrors: Partial<Record<keyof CustomerInput, string>> = {}
@@ -77,48 +107,31 @@ export const BookingConfirmForm = ({ businessId, businessSlug, serviceId }: Book
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="name" className="block text-sm font-medium text-foreground mb-1">
-              Name <span className="text-primary">*</span>
-            </label>
-            <input
-              type="text"
-              id="name"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full px-3 py-2 border border-border rounded-brand bg-surface text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-              required
-            />
-            {errors.name && <p className="text-sm text-red-500 mt-1">{errors.name}</p>}
-          </div>
-
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-foreground mb-1">
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className="w-full px-3 py-2 border border-border rounded-brand bg-surface text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-            />
-            {errors.email && <p className="text-sm text-red-500 mt-1">{errors.email}</p>}
-          </div>
-
-          <div>
-            <label htmlFor="phone" className="block text-sm font-medium text-foreground mb-1">
-              Phone
-            </label>
-            <input
-              type="tel"
-              id="phone"
-              value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              className="w-full px-3 py-2 border border-border rounded-brand bg-surface text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-            />
-            {errors.phone && <p className="text-sm text-red-500 mt-1">{errors.phone}</p>}
-          </div>
+          <FormField
+            id="name"
+            label="Name"
+            type="text"
+            required
+            value={formData.name}
+            error={errors.name}
+            onChange={updateField('name')}
+          />
+          <FormField
+            id="email"
+            label="Email"
+            type="email"
+            value={formData.email || ''}
+            error={errors.email}
+            onChange={updateField('email')}
+          />
+          <FormField
+            id="phone"
+            label="Phone"
+            type="tel"
+            value={formData.phone || ''}
+            error={errors.phone}
+            onChange={updateField('phone')}
+          />
 
           <Button type="submit" variant="solid" size="lg" className="w-full" disabled={isSubmitting}>
             {isSubmitting ? 'Creating booking...' : 'Confirm booking (demo)'}

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { Calendar } from 'lucide-react'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/button'
 
 type StickyCtaProps = {
   businessSlug: string

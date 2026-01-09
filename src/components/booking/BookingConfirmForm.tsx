@@ -3,8 +3,8 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { z } from 'zod'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
-import { Button } from '@/components/ui/Button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
 import { createBooking } from '@/lib/bookingStore'
 
 const customerSchema = z.object({
@@ -85,7 +85,7 @@ export const BookingConfirmForm = ({ businessId, businessSlug, serviceId }: Book
         startDate.toISOString(),
       )
 
-      router.push(`/${businessSlug}/m/${booking.token}`)
+      router.push(`/${businessSlug}/manage/${booking.token}`)
     } catch (error) {
       if (error instanceof z.ZodError) {
         const fieldErrors: Partial<Record<keyof CustomerInput, string>> = {}

@@ -7,7 +7,7 @@ import {
   Dialog,
   DialogContent,
   DialogTrigger,
-} from '@/components/ui/Dialog'
+} from '@/components/ui/dialog'
 
 type GallerySectionProps = {
   gallery?: GalleryImage[]

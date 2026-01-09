@@ -1,5 +1,5 @@
 import { cn } from '@/lib/classNames'
-import { Separator } from '@/components/ui/Separator'
+import { Separator } from '@/components/ui/separator'
 
 type Step = 'service' | 'date' | 'time' | 'confirm'
 

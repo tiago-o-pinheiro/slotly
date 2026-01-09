@@ -10,9 +10,9 @@ import { saveFeedback, getFeedbackByBookingToken } from '@/lib/feedbackStore'
 import type { Booking } from '@/types/booking'
 import type { Business } from '@/types/domain'
 import type { Feedback } from '@/types/feedback'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
-import { Button } from '@/components/ui/Button'
-import { Skeleton } from '@/components/ui/Skeleton'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
 
 const FeedbackPage = () => {
   const params = useParams()
@@ -94,7 +94,7 @@ const FeedbackPage = () => {
       <header className="bg-surface border-b border-border">
         <div className="container mx-auto px-4 py-4 max-w-4xl">
           <Button asChild variant="ghost" size="sm">
-            <Link href={`/${business.slug}/m/${token}`} className="gap-2">
+            <Link href={`/${business.slug}/manage/${token}`} className="gap-2">
               <ArrowLeft className="w-4 h-4" />
               Back to booking
             </Link>
@@ -242,7 +242,7 @@ const FeedbackPage = () => {
                 </div>
               )}
               <Button asChild variant="outline" size="md">
-                <Link href={`/${business.slug}/m/${token}`}>Back to booking</Link>
+                <Link href={`/${business.slug}/manage/${token}`}>Back to booking</Link>
               </Button>
             </CardContent>
           </Card>

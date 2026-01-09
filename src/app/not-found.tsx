@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { Home, Search } from 'lucide-react'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/button'
 
 const NotFoundPage = () => {
   return (

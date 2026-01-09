@@ -39,6 +39,36 @@ export type Rating = {
   count: number
 }
 
+export type GalleryImage = {
+  id: string
+  src: string
+  alt: string
+}
+
+export type About = {
+  title?: string
+  description?: string
+}
+
+export type HighlightIcon = 'scissors' | 'sparkles' | 'clock' | 'shield' | 'leaf' | 'star'
+
+export type Highlight = {
+  id: string
+  label: string
+  icon?: HighlightIcon
+}
+
+export type Social = {
+  instagram?: string
+  website?: string
+}
+
+export type Loyalty = {
+  enabled: boolean
+  target: number
+  rewardLabel: string
+}
+
 export type Business = {
   id: string
   slug: string
@@ -53,4 +83,11 @@ export type Business = {
   services: Service[]
   reviews: ReviewSnippet[]
   theme: Theme
+  heroImage?: string
+  gallery?: GalleryImage[]
+  about?: About
+  highlights?: Highlight[]
+  social?: Social
+  loyalty?: Loyalty
+  googleReviewUrl?: string
 }

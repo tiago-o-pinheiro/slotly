@@ -55,8 +55,8 @@ export const ServicesAccordion = ({ services, businessSlug }: ServicesAccordionP
               <p className="text-foreground/60 text-sm italic mb-4">{service.notes}</p>
             )}
             <Button asChild variant="solid" size="md">
-              <Link href={`/b/${businessSlug}/book?service=${service.id}`}>
-                Book this service
+              <Link href={`/${businessSlug}/book?service=${service.id}`}>
+                Book this
               </Link>
             </Button>
           </AccordionContent>

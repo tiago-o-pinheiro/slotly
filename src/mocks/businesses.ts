@@ -86,6 +86,60 @@ export const mockBusinesses: Business[] = [
       fontSansKey: 'manrope',
       buttonStyle: 'soft',
     },
+    heroImage: 'https://picsum.photos/seed/barber1/800/600',
+    gallery: [
+      {
+        id: 'img_1',
+        src: 'https://placecats.com/300/200',
+        alt: 'Modern barbershop interior with vintage chairs',
+      },
+      {
+        id: 'img_2',
+          src: 'https://placecats.com/300/200',
+          alt: 'Barber working on a customer haircut',
+      },
+      {
+        id: 'img_3',
+        src: 'https://placecats.com/300/200',
+        alt: 'Close-up of professional barbering tools',
+      },
+    ],
+    about: {
+      title: 'Where craft meets conversation',
+      description:
+        "We're a neighborhood barbershop built on precision cuts and good vibes. No rush, no gimmicks—just solid work from barbers who care about the details. Walk-ins welcome, but booking ahead means you skip the wait.",
+    },
+    highlights: [
+      {
+        id: 'h1',
+        label: 'Expert barbers',
+        icon: 'scissors',
+      },
+      {
+        id: 'h2',
+        label: 'Premium products',
+        icon: 'sparkles',
+      },
+      {
+        id: 'h3',
+        label: 'Walk-ins welcome',
+        icon: 'clock',
+      },
+      {
+        id: 'h4',
+        label: 'Clean & safe',
+        icon: 'shield',
+      },
+    ],
+    social: {
+      instagram: 'https://instagram.com/claudiosbarber',
+    },
+    loyalty: {
+      enabled: true,
+      target: 8,
+      rewardLabel: 'Free haircut',
+    },
+    googleReviewUrl: 'https://g.page/r/claudiosbarber/review',
   },
   {
     id: 'biz_lumen_physio',

@@ -1,10 +1,15 @@
+import { Suspense } from 'react'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, Calendar, Clock, CheckCircle2 } from 'lucide-react'
+import { ArrowLeft, Calendar, Clock } from 'lucide-react'
 import { fetchBusinessBySlug } from '@/lib/business'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
+import { Skeleton } from '@/components/ui/Skeleton'
+import { StepHeader } from '@/components/booking/StepHeader'
+import { ServicePicker } from '@/components/booking/ServicePicker'
+import { BookingConfirmForm } from '@/components/booking/BookingConfirmForm'
 import { formatPrice, formatDuration } from '@/lib/format'
 
 type BookingPageProps = {
@@ -12,7 +17,9 @@ type BookingPageProps = {
   searchParams: Promise<{ service?: string }>
 }
 
-const BookingPage = async ({ params, searchParams }: BookingPageProps) => {
+export const dynamic = 'force-dynamic'
+
+const BookingPageContent = async ({ params, searchParams }: BookingPageProps) => {
   const { slug } = await params
   const { service: serviceId } = await searchParams
   const business = await fetchBusinessBySlug(slug)
@@ -22,13 +29,6 @@ const BookingPage = async ({ params, searchParams }: BookingPageProps) => {
   }
 
   const selectedService = serviceId ? business.services.find((s) => s.id === serviceId) : null
-
-  const steps = [
-    { label: 'Service', icon: CheckCircle2, active: !!selectedService },
-    { label: 'Date', icon: Calendar, active: false },
-    { label: 'Time', icon: Clock, active: false },
-    { label: 'Confirm', icon: CheckCircle2, active: false },
-  ]
 
   return (
     <div className="min-h-screen bg-background">
@@ -44,99 +44,118 @@ const BookingPage = async ({ params, searchParams }: BookingPageProps) => {
       </header>
 
       <main className="container mx-auto px-4 py-8 max-w-4xl">
-        <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">Book your appointment</h1>
-          <p className="text-lg text-foreground/70">{business.name}</p>
-        </div>
+        <StepHeader title="Book your appointment" currentStep="service" />
 
-        {/* Step Indicator */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between gap-2">
-            {steps.map((step, index) => (
-              <div key={index} className="flex items-center flex-1">
-                <div className="flex flex-col items-center flex-1">
-                  <div
-                    className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${
-                      step.active ? 'bg-primary text-white' : 'bg-muted text-foreground/40'
-                    }`}
-                  >
-                    <step.icon className="w-5 h-5" />
+        {/* Service Selection or Summary */}
+        {selectedService ? (
+          <>
+            {/* Selected Service Summary */}
+            <Card className="mb-8">
+              <CardHeader>
+                <CardTitle className="flex items-center justify-between">
+                  <span>Selected service</span>
+                  <Button asChild variant="ghost" size="sm">
+                    <Link href={`/${business.slug}/book`}>Change</Link>
+                  </Button>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-foreground text-lg mb-2">{selectedService.name}</h3>
+                    <p className="text-sm text-foreground/70 mb-3">{selectedService.description}</p>
+                    {selectedService.notes && (
+                      <p className="text-xs text-foreground/60 italic">{selectedService.notes}</p>
+                    )}
                   </div>
-                  <span
-                    className={`text-xs mt-2 ${
-                      step.active ? 'text-foreground font-medium' : 'text-foreground/50'
-                    }`}
-                  >
-                    {step.label}
-                  </span>
+                  <div className="text-right shrink-0">
+                    <Badge variant="default" size="md" className="mb-2">
+                      {formatPrice(selectedService.priceCents)}
+                    </Badge>
+                    <p className="text-sm text-foreground/60">{formatDuration(selectedService.durationMin)}</p>
+                  </div>
                 </div>
-                {index < steps.length - 1 && <div className={`h-px flex-1 ${step.active ? 'bg-primary' : 'bg-border'}`} />}
-              </div>
-            ))}
-          </div>
-        </div>
+              </CardContent>
+            </Card>
 
-        {/* Selected Service Summary */}
-        {selectedService && (
-          <Card className="mb-8">
-            <CardHeader>
-              <CardTitle className="text-base">Selected service</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="font-semibold text-foreground">{selectedService.name}</p>
-                  <p className="text-sm text-foreground/60 mt-1">{selectedService.description}</p>
-                </div>
-                <div className="text-right">
-                  <Badge variant="default" size="sm">
-                    {formatPrice(selectedService.priceCents)}
-                  </Badge>
-                  <p className="text-xs text-foreground/60 mt-1">{formatDuration(selectedService.durationMin)}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+            {/* Placeholder: Pick a Date */}
+            <section className="mb-8">
+              <h2 className="text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
+                <Calendar className="w-5 h-5 text-primary" />
+                Pick a date
+              </h2>
+              <Card>
+                <CardContent className="p-6">
+                  <div className="space-y-3">
+                    <Skeleton className="h-8 w-full" />
+                    <div className="grid grid-cols-7 gap-2">
+                      {Array.from({ length: 28 }).map((_, i) => (
+                        <Skeleton key={i} className="h-12 w-full" />
+                      ))}
+                    </div>
+                  </div>
+                  <p className="text-sm text-foreground/50 text-center mt-6">
+                    Date selection will be available once backend integration is complete
+                  </p>
+                </CardContent>
+              </Card>
+            </section>
+
+            {/* Placeholder: Pick a Time */}
+            <section className="mb-8">
+              <h2 className="text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
+                <Clock className="w-5 h-5 text-primary" />
+                Pick a time
+              </h2>
+              <Card>
+                <CardContent className="p-6">
+                  <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                    {Array.from({ length: 12 }).map((_, i) => (
+                      <Skeleton key={i} className="h-10 w-full" />
+                    ))}
+                  </div>
+                  <p className="text-sm text-foreground/50 text-center mt-6">
+                    Time slot selection will be available once backend integration is complete
+                  </p>
+                </CardContent>
+              </Card>
+            </section>
+
+            {/* Booking Confirmation Form */}
+            <section className="mb-8">
+              <BookingConfirmForm businessId={business.id} businessSlug={business.slug} serviceId={selectedService.id} />
+            </section>
+          </>
+        ) : (
+          <>
+            {/* Service Picker - No service selected */}
+            <section className="mb-8">
+              <h2 className="text-xl font-semibold text-foreground mb-4">Choose a service</h2>
+              <ServicePicker services={business.services} businessSlug={business.slug} />
+            </section>
+
+            <Card className="bg-muted/50">
+              <CardContent className="p-6 text-center">
+                <p className="text-sm text-foreground/70">
+                  Select a service above to continue with your booking
+                </p>
+              </CardContent>
+            </Card>
+          </>
         )}
 
-        {/* Placeholder UI */}
-        <div className="grid md:grid-cols-2 gap-6 mb-8">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Calendar</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="h-64 bg-muted rounded-brand flex items-center justify-center">
-                <p className="text-foreground/40 text-sm">Calendar widget (coming soon)</p>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Time slots</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="h-64 bg-muted rounded-brand flex items-center justify-center">
-                <p className="text-foreground/40 text-sm">Time slots (coming soon)</p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Next Steps */}
-        <Card className="bg-primary/5 border-primary/20">
+        {/* Call to action fallback */}
+        <Card className="mt-8 bg-primary/5 border-primary/20">
           <CardContent className="pt-6">
-            <h3 className="font-semibold text-foreground mb-2">Next step: booking flow implementation</h3>
+            <h3 className="font-semibold text-foreground mb-2">Need help booking?</h3>
             <p className="text-foreground/70 text-sm mb-4">
-              The complete booking experience will include service selection, real-time availability, customer details
-              form, and confirmation.
+              You can always reach us directly by phone or email.
             </p>
             <div className="flex flex-col sm:flex-row gap-3">
-              <Button asChild variant="solid" size="md">
-                <a href={`tel:${business.contact.phone}`}>Call to book: {business.contact.phone}</a>
-              </Button>
               <Button asChild variant="outline" size="md">
+                <a href={`tel:${business.contact.phone}`}>Call: {business.contact.phone}</a>
+              </Button>
+              <Button asChild variant="ghost" size="md">
                 <a href={`mailto:${business.contact.email}`}>Email us</a>
               </Button>
             </div>
@@ -148,6 +167,23 @@ const BookingPage = async ({ params, searchParams }: BookingPageProps) => {
         <p>&copy; 2026 {business.name}. All rights reserved.</p>
       </footer>
     </div>
+  )
+}
+
+const BookingPage = (props: BookingPageProps) => {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-background flex items-center justify-center">
+          <div className="text-center">
+            <Skeleton className="h-8 w-48 mx-auto mb-4" />
+            <Skeleton className="h-4 w-32 mx-auto" />
+          </div>
+        </div>
+      }
+    >
+      <BookingPageContent {...props} />
+    </Suspense>
   )
 }
 

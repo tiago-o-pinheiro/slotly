@@ -9,13 +9,18 @@ import { Button } from '@/components/ui/button'
 type ServicePickerProps = {
   services: Service[]
   businessSlug: string
+  onServiceSelect?: (service: Service) => void
 }
 
-export const ServicePicker = ({ services, businessSlug }: ServicePickerProps) => {
+export const ServicePicker = ({ services, businessSlug, onServiceSelect }: ServicePickerProps) => {
   const router = useRouter()
 
-  const handleServiceSelect = (serviceId: string) => {
-    router.replace(`/${businessSlug}/book?service=${serviceId}`)
+  const handleServiceSelect = (service: Service) => {
+    if (onServiceSelect) {
+      onServiceSelect(service)
+    } else {
+      router.replace(`/${businessSlug}/book?service=${service.id}`)
+    }
   }
 
   return (
@@ -38,7 +43,7 @@ export const ServicePicker = ({ services, businessSlug }: ServicePickerProps) =>
               <Button
                 variant="solid"
                 size="sm"
-                onClick={() => handleServiceSelect(service.id)}
+                onClick={() => handleServiceSelect(service)}
                 className="shrink-0"
               >
                 Select

@@ -162,7 +162,7 @@ const BusinessPage = async ({ params }: BusinessPageProps) => {
           {/* Embedded Google Maps */}
           <div className="w-full h-[300px] rounded-xl overflow-hidden border border-border shadow-sm">
             <iframe
-              src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${encodeURIComponent(`${business.address.line1}, ${business.address.city}`)}&zoom=15`}
+              src={`https://maps.google.com/maps?q=${encodeURIComponent(`${business.address.line1}, ${business.address.city}`)}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
               width="100%"
               height="100%"
               style={{ border: 0 }}

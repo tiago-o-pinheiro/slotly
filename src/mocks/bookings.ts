@@ -1,6 +1,35 @@
 import type { Booking } from '@/types/booking'
 
 /**
+ * Helper function to get the next occurrence of a weekday with a specific time.
+ * @param weekday - 1=Monday, 2=Tuesday, ..., 7=Sunday
+ * @param time - Time in HH:mm format (e.g., '10:00')
+ * @returns ISO string of the next occurrence
+ */
+const getNextWeekdayDateIso = (weekday: number, time: string): string => {
+  const today = new Date()
+  const currentDay = today.getDay() // 0=Sunday, 1=Monday, ..., 6=Saturday
+
+  // Convert to ISO weekday (1=Monday, ..., 7=Sunday)
+  const currentIsoWeekday = currentDay === 0 ? 7 : currentDay
+
+  // Calculate days to add
+  let daysToAdd = weekday - currentIsoWeekday
+  if (daysToAdd <= 0) {
+    daysToAdd += 7 // Move to next week if already passed
+  }
+
+  const targetDate = new Date(today)
+  targetDate.setDate(today.getDate() + daysToAdd)
+
+  // Set time
+  const [hours, minutes] = time.split(':').map(Number)
+  targetDate.setHours(hours, minutes, 0, 0)
+
+  return targetDate.toISOString()
+}
+
+/**
  * Mock bookings to demonstrate availability conflicts in the calendar.
  * These bookings are used by the availability engine to exclude occupied time slots.
  *
@@ -72,32 +101,3 @@ export const mockBookings: Booking[] = [
     createdAtIso: new Date().toISOString(),
   },
 ]
-
-/**
- * Helper function to get the next occurrence of a weekday with a specific time.
- * @param weekday - 1=Monday, 2=Tuesday, ..., 7=Sunday
- * @param time - Time in HH:mm format (e.g., '10:00')
- * @returns ISO string of the next occurrence
- */
-const getNextWeekdayDateIso = (weekday: number, time: string): string => {
-  const today = new Date()
-  const currentDay = today.getDay() // 0=Sunday, 1=Monday, ..., 6=Saturday
-
-  // Convert to ISO weekday (1=Monday, ..., 7=Sunday)
-  const currentIsoWeekday = currentDay === 0 ? 7 : currentDay
-
-  // Calculate days to add
-  let daysToAdd = weekday - currentIsoWeekday
-  if (daysToAdd <= 0) {
-    daysToAdd += 7 // Move to next week if already passed
-  }
-
-  const targetDate = new Date(today)
-  targetDate.setDate(today.getDate() + daysToAdd)
-
-  // Set time
-  const [hours, minutes] = time.split(':').map(Number)
-  targetDate.setHours(hours, minutes, 0, 0)
-
-  return targetDate.toISOString()
-}

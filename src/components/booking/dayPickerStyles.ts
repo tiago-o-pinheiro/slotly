@@ -5,7 +5,7 @@ import type { ClassNames } from 'react-day-picker'
  * Styled to match the Slotly design system with rounded corners,
  * muted backgrounds, and primary color accents.
  */
-export const dayPickerClassNames: ClassNames = {
+export const dayPickerClassNames: Partial<ClassNames> = {
   root: 'rdp',
   months: 'flex flex-col sm:flex-row gap-4',
   month: 'space-y-4',

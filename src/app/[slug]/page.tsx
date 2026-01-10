@@ -63,7 +63,7 @@ const BusinessPage = async ({ params }: BusinessPageProps) => {
   return (
     <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden pb-24">
       {/* Sticky Header - Full width background, centered content */}
-      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-border">
+      <header className="sticky top-0 z-50 bg-white/70 backdrop-blur-xl border-b border-border/50 shadow-sm">
         <div className="mx-auto max-w-[1100px] flex items-center justify-between h-16 px-4">
           <div className="flex flex-col justify-center">
             <h2 className="text-foreground text-lg font-bold leading-tight">{business.name}</h2>

@@ -86,21 +86,21 @@ export const mockBusinesses: Business[] = [
       fontSansKey: 'manrope',
       buttonStyle: 'soft',
     },
-    heroImage: 'https://picsum.photos/seed/barber1/800/600',
+    heroImage: 'https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=800&h=600&fit=crop',
     gallery: [
       {
         id: 'img_1',
-        src: 'https://placecats.com/300/200',
+        src: 'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=400&h=300&fit=crop',
         alt: 'Modern barbershop interior with vintage chairs',
       },
       {
         id: 'img_2',
-          src: 'https://placecats.com/300/200',
+          src: 'https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=400&h=300&fit=crop',
           alt: 'Barber working on a customer haircut',
       },
       {
         id: 'img_3',
-        src: 'https://placecats.com/300/200',
+        src: 'https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=400&h=300&fit=crop',
         alt: 'Close-up of professional barbering tools',
       },
     ],

@@ -150,6 +150,55 @@
   .rounded-brand {
     border-radius: var(--radius);
   }
+
+  /* Additional utilities for react-day-picker */
+  .text-muted-foreground {
+    color: hsl(var(--foreground) / 0.5);
+  }
+
+  .bg-card {
+    background-color: hsl(var(--surface));
+  }
+
+  .bg-accent {
+    background-color: hsl(var(--muted));
+  }
+
+  .text-accent-foreground {
+    color: hsl(var(--foreground));
+  }
+
+  .hover\:bg-accent:hover {
+    background-color: hsl(var(--muted));
+  }
+
+  .hover\:text-accent-foreground:hover {
+    color: hsl(var(--foreground));
+  }
+
+  .text-primary-foreground {
+    color: hsl(var(--surface));
+  }
+
+  .hover\:text-primary-foreground:hover {
+    color: hsl(var(--surface));
+  }
+
+  .focus\:bg-primary:focus {
+    background-color: hsl(var(--primary));
+  }
+
+  .focus\:text-primary-foreground:focus {
+    color: hsl(var(--surface));
+  }
+
+  .ring-offset-background {
+    --tw-ring-offset-color: hsl(var(--background));
+  }
+
+  .ring-ring {
+    --tw-ring-color: hsl(var(--primary) / 0.5);
+  }
 }
 
 * {

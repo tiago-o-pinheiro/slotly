@@ -158,6 +158,21 @@ const BusinessPage = async ({ params }: BusinessPageProps) => {
         {/* Visit Us Section */}
         <div className="px-4 py-8 flex flex-col gap-4">
           <h3 className="text-foreground text-lg font-bold">Visit Us</h3>
+
+          {/* Embedded Google Maps */}
+          <div className="w-full h-[300px] rounded-xl overflow-hidden border border-border shadow-sm">
+            <iframe
+              src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${encodeURIComponent(`${business.address.line1}, ${business.address.city}`)}&zoom=15`}
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title="Business location map"
+            />
+          </div>
+
           <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3 gap-3">
           {/* Address Card */}
           <div className="flex items-start gap-4 p-4 rounded-xl bg-surface border border-border shadow-sm">

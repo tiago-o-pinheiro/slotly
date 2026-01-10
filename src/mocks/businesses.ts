@@ -16,10 +16,10 @@ export const mockBusinesses: Business[] = [
       email: 'hello@claudiosbarber.test',
     },
     address: {
-      line1: 'Calle Real 21',
+      line1: 'Carrer Provença 60',
       city: 'Barcelona',
       region: 'Cataluña',
-      postalCode: '08002',
+      postalCode: '08029',
       country: 'ES',
     },
     timezone: 'Europe/Madrid',

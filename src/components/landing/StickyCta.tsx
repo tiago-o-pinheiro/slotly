@@ -38,7 +38,7 @@ export const StickyCta = ({ businessSlug, businessName }: StickyCtaProps) => {
           variant="solid"
           size="lg"
           onClick={handleClick}
-          className="w-full h-12 rounded-xl shadow-lg shadow-primary/30 flex items-center justify-center gap-2"
+          className="w-full"
         >
           <Calendar className="w-5 h-5" />
           Book Appointment

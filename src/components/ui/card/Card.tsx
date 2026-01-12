@@ -8,7 +8,7 @@ export const Card = ({ className, hover = false, ...props }: CardProps) => {
   return (
     <div
       className={cn(
-        'bg-surface border border-border rounded-brand p-4 transition-all duration-200',
+        'bg-(--color-panel-solid) border border-(--gray-6) rounded-(--radius-4) p-4 transition-all duration-200',
         hover && 'hover:shadow-lg hover:-translate-y-1',
         className,
       )}
@@ -26,23 +26,23 @@ export const CardHeader = ({ className, ...props }: CardHeaderProps) => {
 export type CardTitleProps = React.HTMLAttributes<HTMLHeadingElement>
 
 export const CardTitle = ({ className, ...props }: CardTitleProps) => {
-  return <h3 className={cn('text-lg font-semibold text-foreground', className)} {...props} />
+  return <h3 className={cn('text-lg font-semibold text-(--gray-12)', className)} {...props} />
 }
 
 export type CardDescriptionProps = React.HTMLAttributes<HTMLParagraphElement>
 
 export const CardDescription = ({ className, ...props }: CardDescriptionProps) => {
-  return <p className={cn('text-sm text-foreground/70', className)} {...props} />
+  return <p className={cn('text-sm text-(--gray-11)', className)} {...props} />
 }
 
 export type CardContentProps = React.HTMLAttributes<HTMLDivElement>
 
 export const CardContent = ({ className, ...props }: CardContentProps) => {
-  return <div className={cn('text-foreground/80', className)} {...props} />
+  return <div className={cn('text-(--gray-11)', className)} {...props} />
 }
 
 export type CardFooterProps = React.HTMLAttributes<HTMLDivElement>
 
 export const CardFooter = ({ className, ...props }: CardFooterProps) => {
-  return <div className={cn('flex items-center gap-2 mt-4 pt-4 border-t border-border', className)} {...props} />
+  return <div className={cn('flex items-center gap-2 mt-4 pt-4 border-t border-(--gray-6)', className)} {...props} />
 }

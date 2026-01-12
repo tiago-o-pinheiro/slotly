@@ -6,14 +6,14 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
-        default: 'bg-primary/10 text-primary',
-        secondary: 'bg-muted text-foreground',
-        outline: 'border border-border text-foreground',
-        success: 'bg-green-100 text-green-700',
+        default: 'bg-(--accent-a3) text-(--accent-11)',
+        secondary: 'bg-(--gray-a3) text-(--gray-12)',
+        outline: 'border border-(--gray-6) text-(--gray-12)',
+        success: 'bg-(--green-a3) text-(--green-11)',
       },
       size: {
-        sm: 'px-2 py-0.5 text-xs rounded-[calc(var(--radius)*0.5)]',
-        md: 'px-2.5 py-1 text-sm rounded-[calc(var(--radius)*0.75)]',
+        sm: 'px-2 py-0.5 text-xs rounded-(--radius-1)',
+        md: 'px-2.5 py-1 text-sm rounded-(--radius-2)',
       },
     },
     defaultVariants: {

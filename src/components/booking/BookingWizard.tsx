@@ -9,10 +9,10 @@ import type { Business, Service } from '@/types/domain'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card/Card'
 import { Button } from '@/components/ui/button/Button'
 import { Badge } from '@/components/ui/badge/Badge'
+import { Header } from '@/components/widgets/header'
 import { ServicePicker } from './ServicePicker'
 import { DatePicker } from './DatePicker'
 import { TimeSlots } from './TimeSlots'
-import { StepHeader } from './StepHeader'
 import { formatPrice, formatDuration } from '@/lib/format'
 import { createBooking } from '@/lib/bookingStore'
 import { mockBookings } from '@/mocks/bookings'
@@ -268,13 +268,33 @@ export const BookingWizard = ({ business }: BookingWizardProps) => {
       }
     : null
 
+  const stepLabels: Record<WizardStep, string> = {
+    service: 'Service Selection',
+    date: 'Choose Date',
+    time: 'Choose Time',
+    confirm: 'Confirm Details',
+    verify: 'Verification',
+    success: 'Booking Complete',
+  }
+
+  const getStepNumber = (step: WizardStep): number => {
+    const stepOrder: WizardStep[] = ['service', 'date', 'time', 'confirm']
+    const idx = stepOrder.indexOf(step)
+    return idx >= 0 ? idx + 1 : 4
+  }
+
+  const displayStep = currentStep === 'verify' || currentStep === 'success' ? 'confirm' : currentStep
+
   return (
-    <div className="space-y-8">
-      <StepHeader
-        title="Book your appointment"
-        currentStep={
-          currentStep === 'verify' || currentStep === 'success' ? 'confirm' : currentStep
-        }
+    <div className="space-y-6">
+      <Header
+        variant="booking"
+        backHref={`/${business.slug}`}
+        backLabel={`Back to ${business.name}`}
+        title={`Step ${getStepNumber(displayStep)} of 4`}
+        subtitle={stepLabels[displayStep]}
+        currentStep={getStepNumber(displayStep)}
+        totalSteps={4}
       />
 
       {/* Step 1: Service Selection */}

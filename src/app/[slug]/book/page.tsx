@@ -1,12 +1,11 @@
 import { Suspense } from 'react'
 import { notFound } from 'next/navigation'
-import Link from 'next/link'
-import { ArrowLeft } from 'lucide-react'
 import { fetchBusinessBySlug } from '@/lib/business'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { BookingWizard } from '@/components/booking/BookingWizard'
+import { Header } from '@/components/widgets/header'
 
 type BookingPageProps = {
   params: Promise<{ slug: string }>
@@ -24,26 +23,17 @@ const BookingPageContent = async ({ params }: BookingPageProps) => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="bg-surface border-b border-border">
-        <div className="container mx-auto px-4 py-4 max-w-4xl">
-          <Button asChild variant="ghost" size="sm">
-            <Link href={`/${business.slug}`} className="gap-2">
-              <ArrowLeft className="w-4 h-4" />
-              Back to {business.name}
-            </Link>
-          </Button>
-        </div>
-      </header>
+    <div className="min-h-screen bg-(--color-background)">
 
-      <main className="container mx-auto px-4 py-8 max-w-4xl">
+
+      <main className="container mx-auto px-4 pt-2 max-w-4xl">
         <BookingWizard business={business} />
 
         {/* Call to action fallback */}
-        <Card className="mt-8 bg-primary/5 border-primary/20">
+        <Card className="mt-8 bg-(--accent-a2) border-(--accent-6)">
           <CardContent className="pt-6">
-            <h3 className="font-semibold text-foreground mb-2">Need help booking?</h3>
-            <p className="text-foreground/70 text-sm mb-4">
+            <h3 className="font-semibold text-(--gray-12) mb-2">Need help booking?</h3>
+            <p className="text-(--gray-11) text-sm mb-4">
               You can always reach us directly by phone or email.
             </p>
             <div className="flex flex-col sm:flex-row gap-3">
@@ -58,7 +48,7 @@ const BookingPageContent = async ({ params }: BookingPageProps) => {
         </Card>
       </main>
 
-      <footer className="border-t border-border mt-12 py-8 text-center text-sm text-foreground/50">
+      <footer className="border-t border-(--gray-6) mt-12 py-8 text-center text-sm text-(--gray-11)">
         <p>&copy; 2026 {business.name}. All rights reserved.</p>
       </footer>
     </div>

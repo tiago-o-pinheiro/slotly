@@ -2,12 +2,11 @@ import { Suspense } from 'react'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { Phone, MapPin, Mail, Star, ExternalLink, Instagram, Clock } from 'lucide-react'
+import { Phone, MapPin, Star, Clock } from 'lucide-react'
 import { fetchBusinessBySlug } from '@/lib/business'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Separator } from '@/components/ui/separator'
+import { Header } from '@/components/widgets/header'
 import { ServicesAccordion } from '@/components/landing/ServicesAccordion'
 import { WorkingHoursSection } from '@/components/landing/WorkingHoursSection'
 import { StickyCta } from '@/components/landing/StickyCta'
@@ -62,34 +61,13 @@ const BusinessPage = async ({ params }: BusinessPageProps) => {
 
   return (
     <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden pb-24">
-      {/* Sticky Header - Full width background, centered content */}
-      <header className="sticky top-0 z-50 bg-white/70 backdrop-blur-xl border-b border-border/50 shadow-sm">
-        <div className="mx-auto max-w-[1100px] flex items-center justify-between h-16 px-4">
-          <div className="flex flex-col justify-center">
-            <h2 className="text-foreground text-lg font-bold leading-tight">{business.name}</h2>
-            <Badge variant="secondary" size="sm" className="w-fit mt-0.5 text-xs">
-              {business.category}
-            </Badge>
-          </div>
-          <div className="flex items-center gap-3">
-            <Button asChild variant="ghost" size="sm" className="size-10 rounded-full p-0">
-              <a href={`tel:${business.contact.phone}`} aria-label="Call business">
-                <Phone className="w-5 h-5" />
-              </a>
-            </Button>
-            <Button asChild variant="ghost" size="sm" className="size-10 rounded-full p-0">
-              <a
-                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${business.address.line1}, ${business.address.city}`)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Get directions"
-              >
-                <MapPin className="w-5 h-5" />
-              </a>
-            </Button>
-          </div>
-        </div>
-      </header>
+      <Header
+        variant="landing"
+        businessName={business.name}
+        category={business.category}
+        phone={business.contact.phone}
+        address={`${business.address.line1}, ${business.address.city}`}
+      />
 
       {/* Main Content Container */}
       <div className="mx-auto w-full max-w-[1100px]">
@@ -97,17 +75,17 @@ const BusinessPage = async ({ params }: BusinessPageProps) => {
         <div className="@container">
           <div className="md:p-4">
             <div
-              className="relative flex min-h-[420px] flex-col gap-6 bg-cover bg-center bg-no-repeat md:gap-8 md:rounded-lg items-start justify-end px-5 pb-10 md:px-10 overflow-hidden"
+              className="relative flex min-h-[420px] flex-col gap-6 bg-cover bg-center bg-no-repeat md:gap-8 md:rounded-(--radius-4) items-start justify-end px-5 pb-10 md:px-10 overflow-hidden"
               style={{
                 backgroundImage: business.heroImage
                   ? `linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.4) 40%, rgba(0, 0, 0, 0) 100%), url(${business.heroImage})`
-                  : 'linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary)) 100%)',
+                  : `linear-gradient(135deg, var(--accent-9) 0%, var(--accent-10) 100%)`,
               }}
             >
               <div className="flex flex-col gap-3 text-left w-full max-w-[480px]">
                 <div className="flex items-center gap-2 mb-1">
-                  <div className="flex items-center bg-white/20 backdrop-blur-sm px-2 py-1 rounded text-white text-xs font-bold">
-                    <Star className="w-4 h-4 text-yellow-400 fill-yellow-400 mr-1" />
+                  <div className="flex items-center bg-black/20 backdrop-blur-sm px-2 py-1 rounded-(--radius-2) text-white text-xs font-bold">
+                    <Star className="w-4 h-4 text-(--amber-9) fill-(--amber-9) mr-1" />
                     {business.rating.score} ({business.rating.count})
                   </div>
                 </div>
@@ -126,7 +104,7 @@ const BusinessPage = async ({ params }: BusinessPageProps) => {
                   asChild
                   variant="outline"
                   size="lg"
-                  className="flex-1 bg-white/20 backdrop-blur-md text-white border-white/30 hover:bg-white/30"
+                  className="flex-1 bg-black/20 backdrop-blur-md text-white border-white/30 hover:bg-black/30"
                 >
                   <a href={`tel:${business.contact.phone}`}>Call us</a>
                 </Button>
@@ -143,8 +121,8 @@ const BusinessPage = async ({ params }: BusinessPageProps) => {
 
       {/* Services Section */}
       <div className="px-4 py-4">
-        <h3 className="text-foreground text-lg font-bold mb-4">Services</h3>
-        <Suspense fallback={<div className="text-foreground/60">Loading services...</div>}>
+        <h3 className="text-(--gray-12) text-lg font-bold mb-4">Services</h3>
+        <Suspense fallback={<div className="text-(--gray-11)">Loading services...</div>}>
           <ServicesAccordion services={business.services} businessSlug={business.slug} />
         </Suspense>
       </div>

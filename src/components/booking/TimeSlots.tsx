@@ -68,8 +68,8 @@ export const TimeSlots = ({
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-medium">Available times for {formattedDate}</h3>
         </div>
-        <div className="rounded-lg border border-dashed p-8 text-center">
-          <p className="text-sm text-muted-foreground mb-4">
+        <div className="rounded-(--radius-3) border border-dashed p-8 text-center">
+          <p className="text-sm text-(--gray-11) mb-4">
             No available time slots for this day.
           </p>
           <Button variant="outline" size="sm" onClick={onBackToDate}>

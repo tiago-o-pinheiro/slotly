@@ -300,7 +300,7 @@ export const BookingWizard = ({ business }: BookingWizardProps) => {
       {/* Step 1: Service Selection */}
       {currentStep === 'service' && (
         <section>
-          <h2 className="text-xl font-semibold text-foreground mb-4">Choose a service</h2>
+          <h2 className="text-xl font-semibold text-(--gray-12) mb-4">Choose a service</h2>
           <ServicePicker
             services={business.services}
             businessSlug={business.slug}
@@ -317,8 +317,8 @@ export const BookingWizard = ({ business }: BookingWizardProps) => {
             onChangeService={handleBackToService}
           />
           <section>
-            <h2 className="text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
-              <Calendar className="w-5 h-5 text-primary" />
+            <h2 className="text-xl font-semibold text-(--gray-12) mb-4 flex items-center gap-2">
+              <Calendar className="w-5 h-5 text-(--accent-11)" />
               Pick a date
             </h2>
             <DatePicker
@@ -339,8 +339,8 @@ export const BookingWizard = ({ business }: BookingWizardProps) => {
           />
           <DateSummaryCard date={selectedDate} onChangeDate={handleBackToDate} />
           <section>
-            <h2 className="text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
-              <Clock className="w-5 h-5 text-primary" />
+            <h2 className="text-xl font-semibold text-(--gray-12) mb-4 flex items-center gap-2">
+              <Clock className="w-5 h-5 text-(--accent-11)" />
               Pick a time
             </h2>
             <TimeSlots
@@ -435,16 +435,16 @@ export const BookingWizard = ({ business }: BookingWizardProps) => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-(--gray-11)">
               We sent a 6-digit confirmation code to{' '}
               <strong>{getVerificationTarget()}</strong>. Enter it below to complete your
               booking.
             </p>
 
-            <div className="bg-muted/50 p-4 rounded-lg text-sm">
+            <div className="bg-(--gray-3) p-4 rounded-(--radius-3) text-sm">
               <p className="font-medium mb-1">Demo Mode</p>
-              <p className="text-muted-foreground">
-                Your verification code is: <code className="font-mono font-bold text-primary">{verificationCodeSent}</code>
+              <p className="text-(--gray-11)">
+                Your verification code is: <code className="font-mono font-bold text-(--accent-11)">{verificationCodeSent}</code>
               </p>
             </div>
 
@@ -457,12 +457,12 @@ export const BookingWizard = ({ business }: BookingWizardProps) => {
                 id="verificationCode"
                 value={verificationInput}
                 onChange={(e) => setVerificationInput(e.target.value)}
-                className="w-full px-4 py-3 border border-border rounded-brand bg-surface text-foreground text-center text-lg tracking-widest font-mono focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full px-4 py-3 border border-(--gray-6) rounded-(--radius-2) bg-(--gray-1) text-(--gray-12) text-center text-lg tracking-widest font-mono focus:outline-none focus:ring-2 focus:ring-(--accent-8)"
                 placeholder="000000"
                 maxLength={6}
               />
               {verificationError && (
-                <p className="text-sm text-red-500 mt-2">{verificationError}</p>
+                <p className="text-sm text-(--red-9) mt-2">{verificationError}</p>
               )}
             </div>
 
@@ -491,41 +491,41 @@ export const BookingWizard = ({ business }: BookingWizardProps) => {
 
       {/* Step 6: Success */}
       {currentStep === 'success' && selectedService && selectedDate && selectedTime && (
-        <Card className="border-primary/20 bg-primary/5">
+        <Card className="border-(--accent-6) bg-(--accent-2)">
           <CardContent className="pt-6 space-y-6">
             <div className="text-center">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
-                <Check className="w-8 h-8 text-primary" />
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-(--radius-full) bg-(--accent-3) mb-4">
+                <Check className="w-8 h-8 text-(--accent-11)" />
               </div>
-              <h2 className="text-2xl font-bold text-foreground mb-2">Booking confirmed!</h2>
-              <p className="text-muted-foreground">
+              <h2 className="text-2xl font-bold text-(--gray-12) mb-2">Booking confirmed!</h2>
+              <p className="text-(--gray-11)">
                 Your appointment has been successfully booked.
               </p>
             </div>
 
-            <div className="bg-surface border border-border rounded-lg p-4 space-y-3">
-              <h3 className="font-semibold text-foreground">Booking Details</h3>
+            <div className="bg-(--gray-1) border border-(--gray-6) rounded-(--radius-3) p-4 space-y-3">
+              <h3 className="font-semibold text-(--gray-12)">Booking Details</h3>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Service:</span>
+                  <span className="text-(--gray-11)">Service:</span>
                   <span className="font-medium">{selectedService.name}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Date:</span>
+                  <span className="text-(--gray-11)">Date:</span>
                   <span className="font-medium">
                     {format(parse(selectedDate, 'yyyy-MM-dd', new Date()), 'EEEE, MMMM d, yyyy')}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Time:</span>
+                  <span className="text-(--gray-11)">Time:</span>
                   <span className="font-medium">{selectedTime}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Duration:</span>
+                  <span className="text-(--gray-11)">Duration:</span>
                   <span className="font-medium">{formatDuration(selectedService.durationMin)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Price:</span>
+                  <span className="text-(--gray-11)">Price:</span>
                   <span className="font-medium">{formatPrice(selectedService.priceCents)}</span>
                 </div>
               </div>
@@ -579,18 +579,18 @@ type FormFieldProps = {
 
 const FormField = ({ id, label, type, required, value, error, onChange }: FormFieldProps) => (
   <div>
-    <label htmlFor={id} className="block text-sm font-medium text-foreground mb-1">
-      {label} {required && <span className="text-primary">*</span>}
+    <label htmlFor={id} className="block text-sm font-medium text-(--gray-12) mb-1">
+      {label} {required && <span className="text-(--accent-11)">*</span>}
     </label>
     <input
       type={type}
       id={id}
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="w-full px-3 py-2 border border-border rounded-brand bg-surface text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+      className="w-full px-3 py-2 border border-(--gray-6) rounded-(--radius-2) bg-(--gray-1) text-(--gray-12) focus:outline-none focus:ring-2 focus:ring-(--accent-8)"
       required={required}
     />
-    {error && <p className="text-sm text-red-500 mt-1">{error}</p>}
+    {error && <p className="text-sm text-(--red-9) mt-1">{error}</p>}
   </div>
 )
 
@@ -613,14 +613,14 @@ const ServiceSummaryCard = ({
     <CardContent>
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1">
-          <h3 className="font-semibold text-foreground text-lg mb-2">{service.name}</h3>
-          <p className="text-sm text-foreground/70">{service.description}</p>
+          <h3 className="font-semibold text-(--gray-12) text-lg mb-2">{service.name}</h3>
+          <p className="text-sm text-(--gray-12)/70">{service.description}</p>
         </div>
         <div className="text-right shrink-0">
           <Badge variant="default" size="md" className="mb-2">
             {formatPrice(service.priceCents)}
           </Badge>
-          <p className="text-sm text-foreground/60">{formatDuration(service.durationMin)}</p>
+          <p className="text-sm text-(--gray-12)/60">{formatDuration(service.durationMin)}</p>
         </div>
       </div>
     </CardContent>
@@ -638,7 +638,7 @@ const DateSummaryCard = ({
     <CardContent className="py-3">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Calendar className="w-4 h-4 text-primary" />
+          <Calendar className="w-4 h-4 text-(--accent-11)" />
           <span className="font-medium">
             {format(parse(date, 'yyyy-MM-dd', new Date()), 'EEEE, MMMM d, yyyy')}
           </span>
@@ -674,19 +674,19 @@ const BookingSummaryCard = ({
     <CardContent className="space-y-3">
       <div className="flex justify-between items-start">
         <div>
-          <p className="font-semibold text-foreground">{service.name}</p>
-          <p className="text-sm text-muted-foreground">{service.description}</p>
+          <p className="font-semibold text-(--gray-12)">{service.name}</p>
+          <p className="text-sm text-(--gray-11)">{service.description}</p>
         </div>
         <Badge variant="default" size="md">
           {formatPrice(service.priceCents)}
         </Badge>
       </div>
       <div className="flex items-center gap-2 text-sm">
-        <Calendar className="w-4 h-4 text-muted-foreground" />
+        <Calendar className="w-4 h-4 text-(--gray-11)" />
         <span>{format(parse(date, 'yyyy-MM-dd', new Date()), 'EEEE, MMMM d, yyyy')}</span>
       </div>
       <div className="flex items-center gap-2 text-sm">
-        <Clock className="w-4 h-4 text-muted-foreground" />
+        <Clock className="w-4 h-4 text-(--gray-11)" />
         <span>
           {time} ({formatDuration(service.durationMin)})
         </span>

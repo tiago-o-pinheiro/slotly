@@ -114,7 +114,7 @@ const ManageBookingPage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-screen bg-(--color-background) flex items-center justify-center">
         <div className="text-center space-y-4">
           <Skeleton className="h-8 w-48 mx-auto" />
           <Skeleton className="h-4 w-32 mx-auto" />
@@ -147,8 +147,8 @@ const ManageBookingPage = () => {
   const customerIdentifier = booking.customer.email || booking.customer.phone || booking.customer.name
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="bg-surface border-b border-border">
+    <div className="min-h-screen bg-(--color-background)">
+      <header className="bg-(--gray-1) border-b border-(--gray-6)">
         <div className="container mx-auto px-4 py-4 max-w-4xl">
           <Button asChild variant="ghost" size="sm">
             <Link href={`/${business.slug}`} className="gap-2">
@@ -161,7 +161,7 @@ const ManageBookingPage = () => {
 
       <main className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="mb-6">
-          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">Your booking</h1>
+          <h1 className="text-3xl md:text-4xl font-bold text-(--gray-12) mb-2">Your booking</h1>
           <div className="flex items-center gap-2">
             <Badge
               variant={
@@ -174,7 +174,7 @@ const ManageBookingPage = () => {
             >
               {booking.status}
             </Badge>
-            <span className="text-sm text-foreground/60">Booking #{booking.token.slice(0, 8)}</span>
+            <span className="text-sm text-(--gray-12)/60">Booking #{booking.token.slice(0, 8)}</span>
           </div>
         </div>
 
@@ -185,12 +185,12 @@ const ManageBookingPage = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <h3 className="font-semibold text-foreground text-lg mb-1">{service.name}</h3>
-              <p className="text-sm text-foreground/70">{service.description}</p>
-              <div className="flex items-center gap-3 mt-2 text-sm text-foreground/60">
+              <h3 className="font-semibold text-(--gray-12) text-lg mb-1">{service.name}</h3>
+              <p className="text-sm text-(--gray-12)/70">{service.description}</p>
+              <div className="flex items-center gap-3 mt-2 text-sm text-(--gray-12)/60">
                 <span>{formatDuration(service.durationMin)}</span>
-                <span className="text-foreground/40">•</span>
-                <span className="font-medium text-primary">{formatPrice(service.priceCents)}</span>
+                <span className="text-(--gray-12)/40">•</span>
+                <span className="font-medium text-(--accent-11)">{formatPrice(service.priceCents)}</span>
               </div>
             </div>
 
@@ -198,17 +198,17 @@ const ManageBookingPage = () => {
 
             <div className="grid sm:grid-cols-2 gap-4">
               <div className="flex items-start gap-3">
-                <Calendar className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                <Calendar className="w-5 h-5 text-(--accent-11) shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-sm font-medium text-foreground">Date</p>
-                  <p className="text-sm text-foreground/70">{formattedDate}</p>
+                  <p className="text-sm font-medium text-(--gray-12)">Date</p>
+                  <p className="text-sm text-(--gray-12)/70">{formattedDate}</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <Clock className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                <Clock className="w-5 h-5 text-(--accent-11) shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-sm font-medium text-foreground">Time</p>
-                  <p className="text-sm text-foreground/70">{formattedTime}</p>
+                  <p className="text-sm font-medium text-(--gray-12)">Time</p>
+                  <p className="text-sm text-(--gray-12)/70">{formattedTime}</p>
                 </div>
               </div>
             </div>
@@ -216,13 +216,13 @@ const ManageBookingPage = () => {
             <Separator />
 
             <div>
-              <h4 className="font-medium text-foreground mb-2">Customer</h4>
-              <p className="text-sm text-foreground/70">{booking.customer.name}</p>
+              <h4 className="font-medium text-(--gray-12) mb-2">Customer</h4>
+              <p className="text-sm text-(--gray-12)/70">{booking.customer.name}</p>
               {booking.customer.email && (
-                <p className="text-sm text-foreground/70">{booking.customer.email}</p>
+                <p className="text-sm text-(--gray-12)/70">{booking.customer.email}</p>
               )}
               {booking.customer.phone && (
-                <p className="text-sm text-foreground/70">{booking.customer.phone}</p>
+                <p className="text-sm text-(--gray-12)/70">{booking.customer.phone}</p>
               )}
             </div>
           </CardContent>
@@ -252,7 +252,7 @@ const ManageBookingPage = () => {
                     <DialogTitle>Reschedule appointment</DialogTitle>
                   </DialogHeader>
                   <div className="space-y-4 py-4">
-                    <p className="text-sm text-foreground/70">
+                    <p className="text-sm text-(--gray-12)/70">
                       Rescheduling functionality will be available once backend integration is complete.
                     </p>
                     <div className="space-y-2">
@@ -271,7 +271,7 @@ const ManageBookingPage = () => {
 
               <Dialog open={cancelDialogOpen} onOpenChange={setCancelDialogOpen}>
                 <DialogTrigger asChild>
-                  <Button variant="ghost" size="md" className="w-full text-red-500 hover:text-red-600">
+                  <Button variant="ghost" size="md" className="w-full text-(--red-9) hover:text-(--red-10)">
                     <X className="w-4 h-4 mr-2" />
                     Cancel booking
                   </Button>
@@ -281,7 +281,7 @@ const ManageBookingPage = () => {
                     <DialogTitle>Cancel booking?</DialogTitle>
                   </DialogHeader>
                   <div className="py-4">
-                    <p className="text-sm text-foreground/70">
+                    <p className="text-sm text-(--gray-12)/70">
                       Are you sure you want to cancel this booking? This action cannot be undone.
                     </p>
                   </div>
@@ -289,7 +289,7 @@ const ManageBookingPage = () => {
                     <Button variant="outline" className="flex-1" onClick={() => setCancelDialogOpen(false)}>
                       Keep booking
                     </Button>
-                    <Button variant="solid" className="flex-1 bg-red-500 hover:bg-red-600" onClick={handleCancelBooking}>
+                    <Button variant="solid" className="flex-1 bg-(--red-9) hover:bg-(--red-10)" onClick={handleCancelBooking}>
                       Yes, cancel
                     </Button>
                   </div>
@@ -322,10 +322,10 @@ const ManageBookingPage = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-start gap-3">
-              <MapPin className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+              <MapPin className="w-5 h-5 text-(--accent-11) shrink-0 mt-0.5" />
               <div>
-                <p className="text-sm font-medium text-foreground">Address</p>
-                <p className="text-sm text-foreground/70">
+                <p className="text-sm font-medium text-(--gray-12)">Address</p>
+                <p className="text-sm text-(--gray-12)/70">
                   {business.address.line1}
                   <br />
                   {business.address.city}, {business.address.region} {business.address.postalCode}
@@ -334,20 +334,20 @@ const ManageBookingPage = () => {
             </div>
 
             <div className="flex items-start gap-3">
-              <Phone className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+              <Phone className="w-5 h-5 text-(--accent-11) shrink-0 mt-0.5" />
               <div>
-                <p className="text-sm font-medium text-foreground">Phone</p>
-                <a href={`tel:${business.contact.phone}`} className="text-sm text-primary hover:underline">
+                <p className="text-sm font-medium text-(--gray-12)">Phone</p>
+                <a href={`tel:${business.contact.phone}`} className="text-sm text-(--accent-11) hover:underline">
                   {business.contact.phone}
                 </a>
               </div>
             </div>
 
             <div className="flex items-start gap-3">
-              <Mail className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+              <Mail className="w-5 h-5 text-(--accent-11) shrink-0 mt-0.5" />
               <div>
-                <p className="text-sm font-medium text-foreground">Email</p>
-                <a href={`mailto:${business.contact.email}`} className="text-sm text-primary hover:underline">
+                <p className="text-sm font-medium text-(--gray-12)">Email</p>
+                <a href={`mailto:${business.contact.email}`} className="text-sm text-(--accent-11) hover:underline">
                   {business.contact.email}
                 </a>
               </div>
@@ -356,7 +356,7 @@ const ManageBookingPage = () => {
         </Card>
       </main>
 
-      <footer className="border-t border-border mt-12 py-8 text-center text-sm text-foreground/50">
+      <footer className="border-t border-(--gray-6) mt-12 py-8 text-center text-sm text-(--gray-12)/50">
         <p>&copy; 2026 {business.name}. All rights reserved.</p>
       </footer>
     </div>

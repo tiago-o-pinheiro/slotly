@@ -40,13 +40,13 @@ export const ServicesAccordion = ({ services, businessSlug }: ServicesAccordionP
           key={service.id}
           value={service.id}
           id={`service-${service.id}`}
-          className="border-0 bg-card rounded-lg overflow-hidden shadow-sm"
+          className="border-0 bg-(--gray-1) rounded-(--radius-3) overflow-hidden shadow-sm"
         >
-          <AccordionTrigger className="px-6 hover:bg-card">
+          <AccordionTrigger className="px-6 hover:bg-(--gray-1)">
             <div className="flex flex-1 items-start justify-between gap-4 text-left">
               <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-foreground text-base md:text-lg">{service.name}</h3>
-                <div className="flex items-center gap-2 mt-1 text-sm text-muted-foreground">
+                <h3 className="font-semibold text-(--gray-12) text-base md:text-lg">{service.name}</h3>
+                <div className="flex items-center gap-2 mt-1 text-sm text-(--gray-11)">
                   <span>{formatDuration(service.durationMin)}</span>
                   <span>•</span>
                   <span>{formatPrice(service.priceCents)}</span>
@@ -55,9 +55,9 @@ export const ServicesAccordion = ({ services, businessSlug }: ServicesAccordionP
             </div>
           </AccordionTrigger>
           <AccordionContent className="px-6">
-            <p className="text-foreground/80 text-sm md:text-base mb-3">{service.description}</p>
+            <p className="text-(--gray-12)/80 text-sm md:text-base mb-3">{service.description}</p>
             {service.notes && (
-              <p className="text-foreground/60 text-sm italic mb-4">{service.notes}</p>
+              <p className="text-(--gray-12)/60 text-sm italic mb-4">{service.notes}</p>
             )}
             <Button asChild variant="solid" size="md">
               <Link href={`/${businessSlug}/book?service=${service.id}`}>

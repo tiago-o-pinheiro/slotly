@@ -135,10 +135,10 @@ const BusinessPage = async ({ params }: BusinessPageProps) => {
 
         {/* Visit Us Section */}
         <div className="px-4 py-8 flex flex-col gap-4">
-          <h3 className="text-foreground text-lg font-bold">Visit Us</h3>
+          <h3 className="text-(--gray-12) text-lg font-bold">Visit Us</h3>
 
           {/* Embedded Google Maps */}
-          <div className="w-full h-[300px] rounded-xl overflow-hidden border border-border shadow-sm">
+          <div className="w-full h-[300px] rounded-(--radius-4) overflow-hidden border border-(--gray-6) shadow-sm">
             <iframe
               src={`https://maps.google.com/maps?q=${encodeURIComponent(`${business.address.line1}, ${business.address.city}`)}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
               width="100%"
@@ -153,13 +153,13 @@ const BusinessPage = async ({ params }: BusinessPageProps) => {
 
           <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3 gap-3">
           {/* Address Card */}
-          <div className="flex items-start gap-4 p-4 rounded-xl bg-surface border border-border shadow-sm">
-            <div className="size-10 rounded-full bg-muted flex items-center justify-center shrink-0 text-primary">
+          <div className="flex items-start gap-4 p-4 rounded-(--radius-4) bg-(--gray-1) border border-(--gray-6) shadow-sm">
+            <div className="size-10 rounded-(--radius-full) bg-(--gray-3) flex items-center justify-center shrink-0 text-(--accent-11)">
               <MapPin className="w-5 h-5" />
             </div>
             <div className="flex flex-col gap-1">
-              <span className="font-bold text-foreground text-sm">Location</span>
-              <span className="text-sm text-foreground/70">
+              <span className="font-bold text-(--gray-12) text-sm">Location</span>
+              <span className="text-sm text-(--gray-11)">
                 {business.address.line1}
                 <br />
                 {business.address.city}, {business.address.region}
@@ -168,7 +168,7 @@ const BusinessPage = async ({ params }: BusinessPageProps) => {
                 href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${business.address.line1}, ${business.address.city}`)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-primary text-xs font-bold mt-1"
+                className="text-(--accent-11) text-xs font-bold mt-1"
               >
                 Get Directions
               </a>
@@ -176,38 +176,38 @@ const BusinessPage = async ({ params }: BusinessPageProps) => {
           </div>
 
           {/* Hours Card */}
-          <div className="flex items-start gap-4 p-4 rounded-xl bg-surface border border-border shadow-sm">
-            <div className="size-10 rounded-full bg-muted flex items-center justify-center shrink-0 text-primary">
+          <div className="flex items-start gap-4 p-4 rounded-(--radius-4) bg-(--gray-1) border border-(--gray-6) shadow-sm">
+            <div className="size-10 rounded-(--radius-full) bg-(--gray-3) flex items-center justify-center shrink-0 text-(--accent-11)">
               <Clock className="w-5 h-5" />
             </div>
             <div className="flex flex-col gap-1 w-full">
-              <span className="font-bold text-foreground text-sm">Opening Hours</span>
+              <span className="font-bold text-(--gray-12) text-sm">Opening Hours</span>
               {todayHours ? (
                 <div className="flex justify-between items-center text-sm mt-1">
-                  <Badge variant="default" size="sm" className="bg-green-500">
+                  <Badge variant="default" size="sm" className="bg-(--green-9)">
                     Open Today
                   </Badge>
-                  <span className="font-semibold text-foreground">
+                  <span className="font-semibold text-(--gray-12)">
                     {todayHours.start} - {todayHours.end}
                   </span>
                 </div>
               ) : (
-                <span className="text-sm text-foreground/70">Closed today</span>
+                <span className="text-sm text-(--gray-11)">Closed today</span>
               )}
             </div>
           </div>
 
           {/* Contact Card */}
-          <div className="flex items-start gap-4 p-4 rounded-xl bg-surface border border-border shadow-sm">
-            <div className="size-10 rounded-full bg-muted flex items-center justify-center shrink-0 text-primary">
+          <div className="flex items-start gap-4 p-4 rounded-(--radius-4) bg-(--gray-1) border border-(--gray-6) shadow-sm">
+            <div className="size-10 rounded-(--radius-full) bg-(--gray-3) flex items-center justify-center shrink-0 text-(--accent-11)">
               <Phone className="w-5 h-5" />
             </div>
             <div className="flex flex-col gap-1">
-              <span className="font-bold text-foreground text-sm">Contact</span>
-              <a href={`tel:${business.contact.phone}`} className="text-sm text-foreground/70">
+              <span className="font-bold text-(--gray-12) text-sm">Contact</span>
+              <a href={`tel:${business.contact.phone}`} className="text-sm text-(--gray-11)">
                 {business.contact.phone}
               </a>
-              <a href={`mailto:${business.contact.email}`} className="text-sm text-foreground/70">
+              <a href={`mailto:${business.contact.email}`} className="text-sm text-(--gray-11)">
                 {business.contact.email}
               </a>
             </div>
@@ -217,18 +217,18 @@ const BusinessPage = async ({ params }: BusinessPageProps) => {
 
         {/* Reviews Section */}
         <div className="px-4 py-4 mb-8">
-          <h3 className="text-foreground text-lg font-bold mb-4">Reviews</h3>
+          <h3 className="text-(--gray-12) text-lg font-bold mb-4">Reviews</h3>
           <div className="flex flex-col md:flex-row gap-4">
             {business.reviews.map((review) => (
-              <div key={review.id} className="bg-muted p-4 rounded-xl relative flex-1">
-                <div className="absolute top-4 right-4 text-border text-4xl leading-none">"</div>
-                <div className="flex gap-1 text-yellow-400 mb-2">
+              <div key={review.id} className="bg-(--gray-3) p-4 rounded-(--radius-4) relative flex-1">
+                <div className="absolute top-4 right-4 text-(--gray-6) text-4xl leading-none">"</div>
+                <div className="flex gap-1 text-(--amber-9) mb-2">
                   {[...Array(5)].map((_, i) => (
                     <Star key={i} className="w-4 h-4 fill-current" />
                   ))}
                 </div>
-                <p className="text-sm text-foreground/80 font-medium italic mb-3">"{review.quote}"</p>
-                <span className="text-xs font-bold text-foreground">— {review.author}</span>
+                <p className="text-sm text-(--gray-11) font-medium italic mb-3">"{review.quote}"</p>
+                <span className="text-xs font-bold text-(--gray-12)">— {review.author}</span>
               </div>
             ))}
           </div>
@@ -237,10 +237,10 @@ const BusinessPage = async ({ params }: BusinessPageProps) => {
       {/* End Main Content Container */}
 
       {/* Footer */}
-      <div className="px-4 py-8 text-center border-t border-border bg-muted">
-        <h4 className="font-bold text-foreground mb-4">{business.name}</h4>
+      <div className="px-4 py-8 text-center border-t border-(--gray-6) bg-(--gray-2)">
+        <h4 className="font-bold text-(--gray-12) mb-4">{business.name}</h4>
         {business.social && (business.social.instagram || business.social.website) && (
-          <div className="flex justify-center gap-6 text-sm text-foreground/70 mb-6">
+          <div className="flex justify-center gap-6 text-sm text-(--gray-11) mb-6">
             {business.social.instagram && (
               <a href={business.social.instagram} target="_blank" rel="noopener noreferrer">
                 Instagram
@@ -253,7 +253,7 @@ const BusinessPage = async ({ params }: BusinessPageProps) => {
             )}
           </div>
         )}
-        <p className="text-xs text-foreground/50">&copy; 2026 {business.name}. All rights reserved.</p>
+        <p className="text-xs text-(--gray-10)">&copy; 2026 {business.name}. All rights reserved.</p>
       </div>
 
       {/* Sticky Bottom CTA */}

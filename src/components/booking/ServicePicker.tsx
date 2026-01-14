@@ -26,18 +26,18 @@ export const ServicePicker = ({ services, businessSlug, onServiceSelect }: Servi
   return (
     <div className="space-y-3">
       {services.map((service) => (
-        <Card key={service.id} className="cursor-pointer transition-all hover:border-primary/50">
+        <Card key={service.id} className="cursor-pointer transition-all hover:border-(--accent-6)">
           <CardContent className="p-4">
             <div className="flex items-start justify-between gap-4">
               <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-foreground text-base md:text-lg mb-1">
+                <h3 className="font-semibold text-(--gray-12) text-base md:text-lg mb-1">
                   {service.name}
                 </h3>
-                <p className="text-sm text-foreground/70 mb-3 line-clamp-2">{service.description}</p>
-                <div className="flex items-center gap-3 text-sm text-foreground/70">
+                <p className="text-sm text-(--gray-11) mb-3 line-clamp-2">{service.description}</p>
+                <div className="flex items-center gap-3 text-sm text-(--gray-11)">
                   <span>{formatDuration(service.durationMin)}</span>
-                  <span className="text-foreground/40">•</span>
-                  <span className="font-medium text-primary">{formatPrice(service.priceCents)}</span>
+                  <span className="text-(--gray-8)">•</span>
+                  <span className="font-medium text-(--accent-11)">{formatPrice(service.priceCents)}</span>
                 </div>
               </div>
               <Button

@@ -24,10 +24,10 @@ export const LoyaltyCard = ({ loyalty, businessId, customerIdentifier }: Loyalty
   const isComplete = stamps >= loyalty.target
 
   return (
-    <Card className={isComplete ? 'bg-primary/10 border-primary' : ''}>
+    <Card className={isComplete ? 'bg-(--accent-a2) border-(--accent-9)' : ''}>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Gift className="w-5 h-5 text-primary" />
+          <Gift className="w-5 h-5 text-(--accent-11)" />
           Loyalty rewards
         </CardTitle>
       </CardHeader>
@@ -35,16 +35,16 @@ export const LoyaltyCard = ({ loyalty, businessId, customerIdentifier }: Loyalty
         <div className="space-y-4">
           <div>
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-foreground">
+              <span className="text-sm font-medium text-(--gray-12)">
                 {stamps} / {loyalty.target} visits
               </span>
               {isComplete && (
-                <span className="text-sm font-semibold text-primary">Reward earned!</span>
+                <span className="text-sm font-semibold text-(--accent-11)">Reward earned!</span>
               )}
             </div>
-            <div className="h-2 bg-muted rounded-full overflow-hidden">
+            <div className="h-2 bg-(--gray-4) rounded-(--radius-full) overflow-hidden">
               <div
-                className="h-full bg-primary transition-all duration-500"
+                className="h-full bg-(--accent-9) transition-all duration-500"
                 style={{ width: `${progress}%` }}
               />
             </div>
@@ -55,15 +55,15 @@ export const LoyaltyCard = ({ loyalty, businessId, customerIdentifier }: Loyalty
               <div
                 key={i}
                 className={`h-8 rounded-sm ${
-                  i < stamps ? 'bg-primary' : 'bg-muted'
+                  i < stamps ? 'bg-(--accent-9)' : 'bg-(--gray-4)'
                 } transition-colors duration-300`}
               />
             ))}
           </div>
 
-          <p className="text-sm text-foreground/70">
+          <p className="text-sm text-(--gray-11)">
             {isComplete ? (
-              <span className="font-medium text-primary">
+              <span className="font-medium text-(--accent-11)">
                 You've earned: {loyalty.rewardLabel}
               </span>
             ) : (

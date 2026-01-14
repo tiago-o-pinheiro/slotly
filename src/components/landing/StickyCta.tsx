@@ -29,7 +29,7 @@ export const StickyCta = ({ businessSlug, businessName }: StickyCtaProps) => {
 
   return (
     <div
-      className={`fixed bottom-0 left-0 right-0 z-50 p-4 bg-white/80 backdrop-blur-lg border-t border-border shadow-lg transition-all duration-300 ${
+      className={`fixed bottom-0 left-0 right-0 z-50 p-4 bg-(--color-panel-solid)/80 backdrop-blur-lg border-t border-(--gray-6) shadow-lg transition-all duration-300 ${
         isVisible ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0 pointer-events-none'
       }`}
     >

@@ -21,8 +21,8 @@ export const GallerySection = ({ gallery }: GallerySectionProps) => {
   return (
     <section className="flex flex-col gap-4 py-6">
       <div className="px-4 flex justify-between items-end">
-        <h3 className="text-foreground text-lg font-bold">The Shop</h3>
-        <span className="text-sm text-foreground/50">Swipe to see</span>
+        <h3 className="text-(--gray-12) text-lg font-bold">The Shop</h3>
+        <span className="text-sm text-(--gray-10)">Swipe to see</span>
       </div>
 
       <div className="flex w-full overflow-x-auto no-scrollbar px-4 pb-2 gap-4 snap-x snap-mandatory">
@@ -31,7 +31,7 @@ export const GallerySection = ({ gallery }: GallerySectionProps) => {
             <DialogTrigger asChild>
               <button
                 type="button"
-                className="snap-start flex-none w-[280px] cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-xl overflow-hidden relative shadow-sm"
+                className="snap-start flex-none w-[280px] cursor-pointer focus:outline-none focus:ring-2 focus:ring-(--accent-8) focus:ring-offset-2 rounded-xl overflow-hidden relative shadow-sm"
               >
                 <AspectRatio.Root ratio={4 / 3}>
                   <Image
@@ -57,7 +57,7 @@ export const GallerySection = ({ gallery }: GallerySectionProps) => {
                   sizes="(max-width: 768px) 100vw, 80vw"
                 />
               </div>
-              <p className="text-sm text-foreground/70 text-center mt-2">{image.alt}</p>
+              <p className="text-sm text-(--gray-11) text-center mt-2">{image.alt}</p>
             </DialogContent>
           </Dialog>
         ))}

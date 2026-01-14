@@ -25,20 +25,20 @@ export const StepHeader = ({ title, currentStep }: StepHeaderProps) => {
   }
 
   const stepStyles = {
-    active: 'bg-primary text-white',
-    completed: 'bg-primary/20 text-primary',
-    upcoming: 'bg-muted text-foreground/40',
+    active: 'bg-(--accent-9) text-(--accent-contrast)',
+    completed: 'bg-(--accent-a3) text-(--accent-11)',
+    upcoming: 'bg-(--gray-4) text-(--gray-9)',
   }
 
   const labelStyles = {
-    active: 'text-foreground',
-    completed: 'text-primary',
-    upcoming: 'text-foreground/40',
+    active: 'text-(--gray-12)',
+    completed: 'text-(--accent-11)',
+    upcoming: 'text-(--gray-9)',
   }
 
   return (
     <div className="mb-8">
-      <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-6">{title}</h1>
+      <h1 className="text-2xl md:text-3xl font-bold text-(--gray-12) mb-6">{title}</h1>
 
       <div className="flex items-center gap-2">
         {steps.map((step, index) => {
@@ -60,7 +60,7 @@ export const StepHeader = ({ title, currentStep }: StepHeaderProps) => {
               {index < steps.length - 1 && (
                 <Separator
                   orientation="horizontal"
-                  className={cn('flex-1 max-w-[40px] transition-colors', status === 'completed' && 'bg-primary/40')}
+                  className={cn('flex-1 max-w-[40px] transition-colors', status === 'completed' && 'bg-(--accent-6)')}
                 />
               )}
             </div>

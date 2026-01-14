@@ -25,7 +25,7 @@ export const WorkingHoursSection = ({ workingHours }: WorkingHoursSectionProps) 
         return (
           <div
             key={index}
-            className={`flex justify-between text-sm ${isToday ? 'font-semibold text-foreground' : 'text-foreground/70'}`}
+            className={`flex justify-between text-sm ${isToday ? 'font-semibold text-(--gray-12)' : 'text-(--gray-11)'}`}
           >
             <span>{dayName}</span>
             <span>{hours ? `${formatTime(hours.start)} - ${formatTime(hours.end)}` : 'Closed'}</span>

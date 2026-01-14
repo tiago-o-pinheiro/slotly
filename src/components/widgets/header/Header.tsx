@@ -64,7 +64,7 @@ export const Header = (props: HeaderProps) => {
     return (
       <header
         className={cn(
-          'sticky top-0 z-50 bg-white/70 backdrop-blur-xl border-b border-(--gray-6)/50 shadow-sm',
+          'sticky top-0 z-50 bg-(--color-panel-solid)/70 backdrop-blur-xl border-b border-(--gray-6)/50 shadow-sm',
           className
         )}
       >

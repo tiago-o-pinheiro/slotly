@@ -56,5 +56,5 @@ export const DialogDescription = ({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<typeof DialogPrimitive.Description>) => (
-  <DialogPrimitive.Description className={cn('text-sm text-foreground/70', className)} {...props} />
+  <DialogPrimitive.Description className={cn('text-sm text-(--gray-11)', className)} {...props} />
 )

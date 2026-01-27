@@ -22,6 +22,14 @@ export const formatDuration = (minutes: number): string => {
   return `${hours}h ${remainingMinutes}min`
 }
 
+/** Format a Date to ICS-compatible UTC string (e.g. 20260127T143000Z). */
+export const formatICSDate = (date: Date): string =>
+  date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z'
+
+/** Format hours and minutes to HH:mm (zero-padded). */
+export const formatHHmm = (hours: number, minutes: number): string =>
+  `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`
+
 export const formatTime = (time: string): string => {
   // Input format: HH:mm, output format: h:mma or HH:mm depending on preference
   const [hours, minutes] = time.split(':').map(Number)

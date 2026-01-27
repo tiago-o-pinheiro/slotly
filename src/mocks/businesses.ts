@@ -2,7 +2,7 @@ import type { Business } from '@/types/domain'
 
 export const mockBusinesses: Business[] = [
   {
-    id: 'biz_claudio_barber',
+    id: 'b6f7e7e0-0000-4000-8000-000000000001',
     slug: 'claudios-barber',
     name: "Claudio's Barber",
     category: 'Barbershop',
@@ -32,7 +32,7 @@ export const mockBusinesses: Business[] = [
     ],
     services: [
       {
-        id: 'haircut',
+        id: 'b6f7e7e0-0000-4000-8000-000000000101',
         name: 'Haircut',
         durationMin: 30,
         priceCents: 1800,
@@ -40,17 +40,9 @@ export const mockBusinesses: Business[] = [
         notes: 'Arrive 5 minutes early.',
       },
       {
-        id: 'beard-trim',
-        name: 'Beard trim',
-        durationMin: 20,
-        priceCents: 1400,
-        description: 'Shape, line-up and hot towel finish.',
-        notes: null,
-      },
-      {
-        id: 'haircut-beard',
+        id: 'b6f7e7e0-0000-4000-8000-000000000102',
         name: 'Haircut + Beard',
-        durationMin: 50,
+        durationMin: 45,
         priceCents: 2900,
         description: 'Full combo service with detail work.',
         notes: 'Recommended for first-time clients.',
@@ -61,16 +53,19 @@ export const mockBusinesses: Business[] = [
         id: 'rev_1',
         quote: 'Best fade I had in years.',
         author: 'Alex M.',
+        rating: 5,
       },
       {
         id: 'rev_2',
         quote: 'Quick, clean, and friendly.',
         author: 'Sara P.',
+        rating: 5,
       },
       {
         id: 'rev_3',
         quote: 'Beard trim was spot on.',
         author: 'Jon D.',
+        rating: 4,
       },
     ],
     theme: {
@@ -192,11 +187,13 @@ export const mockBusinesses: Business[] = [
         id: 'rev_1',
         quote: 'Felt better after the first session.',
         author: 'Laura G.',
+        rating: 5,
       },
       {
         id: 'rev_2',
         quote: 'Professional and calming experience.',
         author: 'Miguel T.',
+        rating: 5,
       },
     ],
     theme: {

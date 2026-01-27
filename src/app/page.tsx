@@ -13,7 +13,7 @@ const HomePage = () => {
             Slotly
           </h1>
           <p className="text-lg md:text-xl text-(--gray-12)/60 mb-10 max-w-2xl mx-auto leading-relaxed">
-            The booking platform that gets out of the way. Fast, simple, no drama.
+            Booking made simple. Pick a service, choose a time, done.
           </p>
           <Button asChild variant="solid" size="lg" className="shadow-lg">
             <Link href="/claudios-barber" className="gap-2">
@@ -30,9 +30,9 @@ const HomePage = () => {
               <div className="inline-flex items-center justify-center w-14 h-14 bg-foreground/5 rounded-(--radius-full) mb-6">
                 <Zap className="w-6 h-6 text-(--gray-12)/70" />
               </div>
-              <h3 className="text-lg font-semibold text-(--gray-12) mb-3">Lightning fast</h3>
+              <h3 className="text-lg font-semibold text-(--gray-12) mb-3">Simple by design</h3>
               <p className="text-(--gray-12)/60 text-sm leading-relaxed">
-                Book in under a minute. No account required, no friction.
+                No account needed. Just pick what you need and confirm.
               </p>
             </CardContent>
           </Card>
@@ -42,9 +42,9 @@ const HomePage = () => {
               <div className="inline-flex items-center justify-center w-14 h-14 bg-foreground/5 rounded-(--radius-full) mb-6">
                 <Calendar className="w-6 h-6 text-(--gray-12)/70" />
               </div>
-              <h3 className="text-lg font-semibold text-(--gray-12) mb-3">Real-time availability</h3>
+              <h3 className="text-lg font-semibold text-(--gray-12) mb-3">Always up to date</h3>
               <p className="text-(--gray-12)/60 text-sm leading-relaxed">
-                See what's open right now. No back-and-forth, no waiting.
+                See available times instantly. No calls, no waiting.
               </p>
             </CardContent>
           </Card>
@@ -54,9 +54,9 @@ const HomePage = () => {
               <div className="inline-flex items-center justify-center w-14 h-14 bg-foreground/5 rounded-(--radius-full) mb-6">
                 <Shield className="w-6 h-6 text-(--gray-12)/70" />
               </div>
-              <h3 className="text-lg font-semibold text-(--gray-12) mb-3">Built for trust</h3>
+              <h3 className="text-lg font-semibold text-(--gray-12) mb-3">Respectful of your time</h3>
               <p className="text-(--gray-12)/60 text-sm leading-relaxed">
-                Secure, reliable, and respectful of your time and data.
+                We only ask what&apos;s needed. Your data stays with your business.
               </p>
             </CardContent>
           </Card>
@@ -66,13 +66,13 @@ const HomePage = () => {
         <section className="text-center">
           <Card className="bg-(--gray-1)/70 backdrop-blur-md border border-(--gray-6)/50 max-w-2xl mx-auto shadow-lg">
             <CardContent className="pt-10 pb-10">
-              <h2 className="text-2xl md:text-3xl font-bold text-(--gray-12) mb-4">See it in action</h2>
+              <h2 className="text-2xl md:text-3xl font-bold text-(--gray-12) mb-4">Try it yourself</h2>
               <p className="text-(--gray-12)/60 mb-8 leading-relaxed">
-                Check out our demo business to see how Slotly works for customers.
+                Browse a demo business and see how booking feels.
               </p>
               <Button asChild variant="solid" size="lg" className="shadow-md">
                 <Link href="/claudios-barber" className="gap-2">
-                  View Claudio's Barber
+                  View Claudio&apos;s Barber
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </Button>
@@ -81,7 +81,7 @@ const HomePage = () => {
         </section>
 
         <footer className="mt-24 pt-8 border-t border-(--gray-6)/50 text-center text-sm text-(--gray-12)/50">
-          <p>&copy; 2026 Slotly. Built for businesses that value simplicity.</p>
+          <p>&copy; 2026 Slotly</p>
         </footer>
       </div>
     </div>

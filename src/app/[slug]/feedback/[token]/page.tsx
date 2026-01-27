@@ -157,7 +157,7 @@ const FeedbackPage = () => {
                     <CardContent className="pt-6 text-center">
                       <ThumbsUp className="w-12 h-12 text-(--accent-11) mx-auto mb-4" />
                       <h3 className="font-semibold text-(--gray-12) text-lg mb-2">
-                        We're glad you had a great experience!
+                        We&apos;re glad you had a great experience!
                       </h3>
                       <p className="text-sm text-(--gray-12)/70 mb-6">
                         Would you mind sharing your experience with others on Google?
@@ -191,7 +191,7 @@ const FeedbackPage = () => {
                     </CardHeader>
                     <CardContent>
                       <p className="text-sm text-(--gray-12)/70 mb-4">
-                        We're sorry to hear your experience wasn't perfect. Please share what went wrong so we can
+                        We&apos;re sorry to hear your experience wasn&apos;t perfect. Please share what went wrong so we can
                         make it better.
                       </p>
                       <textarea
@@ -238,7 +238,7 @@ const FeedbackPage = () => {
               <p className="text-sm text-(--gray-12)/70 mb-4">Thank you for taking the time to share your thoughts.</p>
               {existingFeedback?.comment && (
                 <div className="bg-(--gray-1) border border-(--gray-6) rounded-(--radius-2) p-4 mb-4">
-                  <p className="text-sm text-(--gray-12)/70 italic">"{existingFeedback.comment}"</p>
+                  <p className="text-sm text-(--gray-12)/70 italic">&ldquo;{existingFeedback.comment}&rdquo;</p>
                 </div>
               )}
               <Button asChild variant="outline" size="md">

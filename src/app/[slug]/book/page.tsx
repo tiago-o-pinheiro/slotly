@@ -5,7 +5,6 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { BookingWizard } from '@/components/booking/BookingWizard'
-import { Header } from '@/components/widgets/header'
 
 type BookingPageProps = {
   params: Promise<{ slug: string }>

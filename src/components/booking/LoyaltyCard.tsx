@@ -1,10 +1,12 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useSyncExternalStore } from 'react'
 import { Gift } from 'lucide-react'
 import type { Loyalty } from '@/types/domain'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { getLoyaltyStamps } from '@/lib/loyaltyStore'
+
+const noopSubscribe = () => () => {}
 
 type LoyaltyCardProps = {
   loyalty: Loyalty
@@ -13,12 +15,11 @@ type LoyaltyCardProps = {
 }
 
 export const LoyaltyCard = ({ loyalty, businessId, customerIdentifier }: LoyaltyCardProps) => {
-  const [stamps, setStamps] = useState(0)
-
-  useEffect(() => {
-    const currentStamps = getLoyaltyStamps(businessId, customerIdentifier)
-    setStamps(currentStamps)
-  }, [businessId, customerIdentifier])
+  const stamps = useSyncExternalStore(
+    noopSubscribe,
+    () => getLoyaltyStamps(businessId, customerIdentifier),
+    () => 0,
+  )
 
   const progress = Math.min((stamps / loyalty.target) * 100, 100)
   const isComplete = stamps >= loyalty.target
@@ -64,7 +65,7 @@ export const LoyaltyCard = ({ loyalty, businessId, customerIdentifier }: Loyalty
           <p className="text-sm text-(--gray-11)">
             {isComplete ? (
               <span className="font-medium text-(--accent-11)">
-                You've earned: {loyalty.rewardLabel}
+                You&apos;ve earned: {loyalty.rewardLabel}
               </span>
             ) : (
               <>

@@ -1,9 +1,9 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { z } from 'zod'
-import { Calendar, Clock, User, Mail, Check, Download, ArrowLeft } from 'lucide-react'
+import { Calendar, Clock, User, Check, Download, ArrowLeft, Phone, ShieldCheck } from 'lucide-react'
 import { format, parse } from 'date-fns'
 import type { Business, Service } from '@/types/domain'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card/Card'
@@ -13,16 +13,20 @@ import { Header } from '@/components/widgets/header'
 import { ServicePicker } from './ServicePicker'
 import { DatePicker } from './DatePicker'
 import { TimeSlots } from './TimeSlots'
-import { formatPrice, formatDuration } from '@/lib/format'
-import { createBooking } from '@/lib/bookingStore'
-import { mockBookings } from '@/mocks/bookings'
-import type { AvailabilityParams } from '@/lib/availability'
+import { formatPrice, formatDuration, formatICSDate, formatHHmm } from '@/lib/format'
 import {
-  sendVerificationCode,
-  verifyCode,
-  generateVerificationCode,
-  getVerificationTarget,
-} from '@/lib/mockMail'
+  initSession,
+  getMonthAvailability,
+  getDayAvailability,
+  lockAppointment,
+  confirmAppointment,
+  verifyAppointment,
+  BookingApiError,
+} from '@/lib/api'
+import type { TimeSlot } from '@/lib/api'
+import { computeAvailableDays, computeSlotsForDay } from '@/lib/availability'
+import type { AvailabilityParams } from '@/lib/availability'
+import { mockBookings } from '@/mocks/bookings'
 
 type BookingWizardProps = {
   business: Business
@@ -32,8 +36,8 @@ type WizardStep = 'service' | 'date' | 'time' | 'confirm' | 'verify' | 'success'
 
 const customerSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
-  email: z.string().email('Invalid email address').optional().or(z.literal('')),
-  phone: z.string().optional(),
+  email: z.string().min(1, 'Email is required').email('Please enter a valid email address'),
+  phone: z.string().min(6, 'Please enter a valid phone number'),
 })
 
 type CustomerInput = z.infer<typeof customerSchema>
@@ -42,12 +46,12 @@ export const BookingWizard = ({ business }: BookingWizardProps) => {
   const router = useRouter()
   const searchParams = useSearchParams()
 
-  // State from URL
+  // URL state
   const serviceId = searchParams.get('service')
   const dateParam = searchParams.get('date')
   const timeParam = searchParams.get('time')
 
-  // Local state
+  // Wizard state
   const [currentStep, setCurrentStep] = useState<WizardStep>('service')
   const [selectedDate, setSelectedDate] = useState<string | null>(dateParam)
   const [selectedTime, setSelectedTime] = useState<string | null>(timeParam)
@@ -58,16 +62,35 @@ export const BookingWizard = ({ business }: BookingWizardProps) => {
   })
   const [errors, setErrors] = useState<Partial<Record<keyof CustomerInput, string>>>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [verificationCodeSent, setVerificationCodeSent] = useState('')
-  const [verificationInput, setVerificationInput] = useState('')
-  const [verificationError, setVerificationError] = useState('')
-  const [bookingToken, setBookingToken] = useState('')
+  const [submitError, setSubmitError] = useState<string | null>(null)
+
+  // API state
+  const [sessionReady, setSessionReady] = useState(false)
+  const [availableDays, setAvailableDays] = useState<string[]>([])
+  const [availableDaysLoading, setAvailableDaysLoading] = useState(false)
+  const [daySlots, setDaySlots] = useState<TimeSlot[]>([])
+  const [daySlotsLoading, setDaySlotsLoading] = useState(false)
+  const [appointmentId, setAppointmentId] = useState<string | null>(null)
+
+  // Verify state
+  const [verifyCode, setVerifyCode] = useState('')
+  const [verifyError, setVerifyError] = useState<string | null>(null)
+  const [isVerifying, setIsVerifying] = useState(false)
 
   const selectedService = serviceId
     ? business.services.find((s) => s.id === serviceId)
     : null
 
-  // Update step based on selections
+  // ── Session init ──────────────────────────────────────
+
+  useEffect(() => {
+    initSession()
+      .then(() => setSessionReady(true))
+      .catch(() => setSessionReady(true)) // proceed anyway; API calls will retry
+  }, [])
+
+  // ── Step derivation from URL ──────────────────────────
+
   useEffect(() => {
     if (!serviceId) {
       setCurrentStep('service')
@@ -80,6 +103,95 @@ export const BookingWizard = ({ business }: BookingWizardProps) => {
     }
   }, [serviceId, dateParam, timeParam])
 
+  // ── Fetch month availability when service changes ─────
+
+  const fetchMonthAvailability = useCallback(async (service: Service) => {
+    setAvailableDaysLoading(true)
+    try {
+      const now = new Date()
+      const thisMonth = await getMonthAvailability({
+        businessId: business.id,
+        serviceId: service.id,
+        year: now.getFullYear(),
+        month: now.getMonth() + 1,
+      })
+
+      // Also fetch next month for calendar navigation
+      const nextDate = new Date(now.getFullYear(), now.getMonth() + 1, 1)
+      const nextMonth = await getMonthAvailability({
+        businessId: business.id,
+        serviceId: service.id,
+        year: nextDate.getFullYear(),
+        month: nextDate.getMonth() + 1,
+      })
+
+      const allDays = [
+        ...thisMonth.availableDates,
+        ...nextMonth.availableDates,
+      ]
+      setAvailableDays(allDays)
+    } catch {
+      // Fallback to local computation if API unavailable
+      const params: AvailabilityParams = {
+        workingHours: business.workingHours,
+        serviceDurationMin: service.durationMin,
+        bufferMin: 0,
+        existingBookings: mockBookings,
+        businessId: business.id,
+      }
+      const localDays = computeAvailableDays(params, 60)
+      setAvailableDays(localDays)
+    } finally {
+      setAvailableDaysLoading(false)
+    }
+  }, [business])
+
+  useEffect(() => {
+    if (selectedService && sessionReady) {
+      fetchMonthAvailability(selectedService)
+    }
+  }, [selectedService, sessionReady, fetchMonthAvailability])
+
+  // ── Fetch day slots when date changes ─────────────────
+
+  const fetchDaySlots = useCallback(async (service: Service, date: string) => {
+    setDaySlotsLoading(true)
+    try {
+      const result = await getDayAvailability({
+        businessId: business.id,
+        serviceId: service.id,
+        date,
+      })
+      setDaySlots(result.slots)
+    } catch {
+      // Fallback to local computation
+      const params: AvailabilityParams = {
+        workingHours: business.workingHours,
+        serviceDurationMin: service.durationMin,
+        bufferMin: 0,
+        existingBookings: mockBookings,
+        businessId: business.id,
+      }
+      const localSlots = computeSlotsForDay(params, date)
+      setDaySlots(
+        localSlots.map((s) => ({
+          startTime: format(new Date(s.startAtIso), 'HH:mm'),
+          endTime: format(new Date(s.endAtIso), 'HH:mm'),
+        }))
+      )
+    } finally {
+      setDaySlotsLoading(false)
+    }
+  }, [business])
+
+  useEffect(() => {
+    if (selectedService && selectedDate && sessionReady) {
+      fetchDaySlots(selectedService, selectedDate)
+    }
+  }, [selectedService, selectedDate, sessionReady, fetchDaySlots])
+
+  // ── URL management ────────────────────────────────────
+
   const updateUrl = (updates: {
     service?: string | null
     date?: string | null
@@ -88,29 +200,22 @@ export const BookingWizard = ({ business }: BookingWizardProps) => {
     const params = new URLSearchParams(searchParams.toString())
 
     if (updates.service !== undefined) {
-      if (updates.service) {
-        params.set('service', updates.service)
-      } else {
-        params.delete('service')
-      }
+      if (updates.service) params.set('service', updates.service)
+      else params.delete('service')
     }
     if (updates.date !== undefined) {
-      if (updates.date) {
-        params.set('date', updates.date)
-      } else {
-        params.delete('date')
-      }
+      if (updates.date) params.set('date', updates.date)
+      else params.delete('date')
     }
     if (updates.time !== undefined) {
-      if (updates.time) {
-        params.set('time', updates.time)
-      } else {
-        params.delete('time')
-      }
+      if (updates.time) params.set('time', updates.time)
+      else params.delete('time')
     }
 
     router.replace(`/${business.slug}/book?${params.toString()}`)
   }
+
+  // ── Handlers ──────────────────────────────────────────
 
   const handleServiceSelect = (service: Service) => {
     updateUrl({ service: service.id, date: null, time: null })
@@ -142,30 +247,42 @@ export const BookingWizard = ({ business }: BookingWizardProps) => {
     setCustomerData({ ...customerData, [field]: value })
   }
 
+  // ── Confirm: lock → confirm → move to verify ─────────
+
   const handleConfirmSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setErrors({})
+    setSubmitError(null)
     setIsSubmitting(true)
 
     try {
       const validated = customerSchema.parse(customerData)
+      if (!selectedService || !selectedDate || !selectedTime) return
 
-      // Validate email or phone is provided
-      if (!validated.email && !validated.phone) {
-        setErrors({ email: 'Please provide either email or phone number' })
-        setIsSubmitting(false)
-        return
-      }
+      // Compute end time from service duration
+      const [h, m] = selectedTime.split(':').map(Number)
+      const endDate = new Date(2000, 0, 1, h, m + selectedService.durationMin)
+      const endTime = formatHHmm(endDate.getHours(), endDate.getMinutes())
 
-      // Generate and send verification code
-      const code = generateVerificationCode()
-      setVerificationCodeSent(code)
+      // Step 1: Lock the slot
+      const lock = await lockAppointment({
+        businessId: business.id,
+        serviceId: selectedService.id,
+        date: selectedDate,
+        startTime: selectedTime,
+        endTime,
+      })
 
-      const target = validated.email || validated.phone || ''
-      await sendVerificationCode(target, code)
+      // Step 2: Confirm with customer details
+      const confirmation = await confirmAppointment({
+        appointmentId: lock.ID,
+        name: validated.name,
+        email: validated.email,
+        phone: validated.phone,
+      })
 
+      setAppointmentId(confirmation.appointmentId)
       setCurrentStep('verify')
-      setIsSubmitting(false)
     } catch (error) {
       if (error instanceof z.ZodError) {
         const fieldErrors: Partial<Record<keyof CustomerInput, string>> = {}
@@ -175,47 +292,50 @@ export const BookingWizard = ({ business }: BookingWizardProps) => {
           }
         })
         setErrors(fieldErrors)
+      } else if (error instanceof BookingApiError) {
+        setSubmitError(
+          error.status === 409
+            ? 'This time slot was just taken. Please pick another time.'
+            : 'Something went wrong. Please try again.'
+        )
+      } else {
+        setSubmitError('Something went wrong. Please try again.')
       }
+    } finally {
       setIsSubmitting(false)
     }
   }
 
-  const handleVerifyCode = () => {
-    if (verifyCode(verificationInput)) {
-      // Create booking
-      if (!selectedService || !selectedDate || !selectedTime) return
+  // ── Verify: code → verify → success ───────────────────
 
-      const [hours, minutes] = selectedTime.split(':').map(Number)
-      const bookingDate = parse(selectedDate, 'yyyy-MM-dd', new Date())
-      bookingDate.setHours(hours, minutes, 0, 0)
+  const handleVerifySubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!appointmentId) return
+    setVerifyError(null)
+    setIsVerifying(true)
 
-      const booking = createBooking(
-        business.id,
-        selectedService.id,
-        {
-          name: customerData.name,
-          email: customerData.email || undefined,
-          phone: customerData.phone || undefined,
-        },
-        bookingDate.toISOString()
-      )
-
-      setBookingToken(booking.token)
+    try {
+      await verifyAppointment({
+        appointmentId,
+        confirmationCode: verifyCode.trim(),
+      })
       setCurrentStep('success')
-      setVerificationError('')
-    } else {
-      setVerificationError('Invalid code. Please try again.')
+    } catch (error) {
+      if (error instanceof BookingApiError) {
+        setVerifyError(
+          error.status === 400 || error.status === 422
+            ? 'That code doesn\'t match. Please check and try again.'
+            : 'Something went wrong. Please try again.'
+        )
+      } else {
+        setVerifyError('Something went wrong. Please try again.')
+      }
+    } finally {
+      setIsVerifying(false)
     }
   }
 
-  const handleResendCode = async () => {
-    const code = generateVerificationCode()
-    setVerificationCodeSent(code)
-    const target = customerData.email || customerData.phone || ''
-    await sendVerificationCode(target, code)
-    setVerificationInput('')
-    setVerificationError('')
-  }
+  // ── ICS download ──────────────────────────────────────
 
   const handleDownloadICS = () => {
     if (!selectedService || !selectedDate || !selectedTime) return
@@ -227,16 +347,12 @@ export const BookingWizard = ({ business }: BookingWizardProps) => {
     const endDate = new Date(bookingDate)
     endDate.setMinutes(endDate.getMinutes() + selectedService.durationMin)
 
-    const formatICSDate = (date: Date) => {
-      return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z'
-    }
-
     const icsContent = [
       'BEGIN:VCALENDAR',
       'VERSION:2.0',
       'PRODID:-//Slotly//Booking//EN',
       'BEGIN:VEVENT',
-      `UID:${bookingToken}@slotly.test`,
+      `UID:${appointmentId ?? 'local'}@slotly`,
       `DTSTAMP:${formatICSDate(new Date())}`,
       `DTSTART:${formatICSDate(bookingDate)}`,
       `DTEND:${formatICSDate(endDate)}`,
@@ -252,38 +368,31 @@ export const BookingWizard = ({ business }: BookingWizardProps) => {
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = url
-    link.download = `booking-${bookingToken}.ics`
+    link.download = `booking-${appointmentId ?? 'local'}.ics`
     link.click()
     URL.revokeObjectURL(url)
   }
 
-  // Build availability params
-  const availabilityParams: AvailabilityParams | null = selectedService
-    ? {
-        workingHours: business.workingHours,
-        serviceDurationMin: selectedService.durationMin,
-        bufferMin: 0,
-        existingBookings: mockBookings,
-        businessId: business.id,
-      }
-    : null
+  // ── Step labels & progress ────────────────────────────
 
   const stepLabels: Record<WizardStep, string> = {
-    service: 'Service Selection',
-    date: 'Choose Date',
-    time: 'Choose Time',
-    confirm: 'Confirm Details',
-    verify: 'Verification',
-    success: 'Booking Complete',
+    service: 'Choose a service',
+    date: 'Pick a date',
+    time: 'Pick a time',
+    confirm: 'Your details',
+    verify: 'Confirm your booking',
+    success: 'All set',
   }
 
   const getStepNumber = (step: WizardStep): number => {
-    const stepOrder: WizardStep[] = ['service', 'date', 'time', 'confirm']
+    const stepOrder: WizardStep[] = ['service', 'date', 'time', 'confirm', 'verify']
     const idx = stepOrder.indexOf(step)
-    return idx >= 0 ? idx + 1 : 4
+    return idx >= 0 ? idx + 1 : 5
   }
 
-  const displayStep = currentStep === 'verify' || currentStep === 'success' ? 'confirm' : currentStep
+  const totalSteps = 5
+
+  const displayStep = currentStep === 'success' ? 'verify' : currentStep
 
   return (
     <div className="space-y-6">
@@ -291,10 +400,10 @@ export const BookingWizard = ({ business }: BookingWizardProps) => {
         variant="booking"
         backHref={`/${business.slug}`}
         backLabel={`Back to ${business.name}`}
-        title={`Step ${getStepNumber(displayStep)} of 4`}
+        title={`Step ${getStepNumber(displayStep)} of ${totalSteps}`}
         subtitle={stepLabels[displayStep]}
         currentStep={getStepNumber(displayStep)}
-        totalSteps={4}
+        totalSteps={totalSteps}
       />
 
       {/* Step 1: Service Selection */}
@@ -310,7 +419,7 @@ export const BookingWizard = ({ business }: BookingWizardProps) => {
       )}
 
       {/* Step 2: Date Selection */}
-      {currentStep === 'date' && selectedService && availabilityParams && (
+      {currentStep === 'date' && selectedService && (
         <>
           <ServiceSummaryCard
             service={selectedService}
@@ -324,14 +433,15 @@ export const BookingWizard = ({ business }: BookingWizardProps) => {
             <DatePicker
               selectedDate={selectedDate}
               onDateSelect={handleDateSelect}
-              availabilityParams={availabilityParams}
+              availableDays={availableDays}
+              isLoading={availableDaysLoading}
             />
           </section>
         </>
       )}
 
       {/* Step 3: Time Selection */}
-      {currentStep === 'time' && selectedService && selectedDate && availabilityParams && (
+      {currentStep === 'time' && selectedService && selectedDate && (
         <>
           <ServiceSummaryCard
             service={selectedService}
@@ -348,7 +458,8 @@ export const BookingWizard = ({ business }: BookingWizardProps) => {
               selectedTime={selectedTime}
               onTimeSelect={handleTimeSelect}
               onBackToDate={handleBackToDate}
-              availabilityParams={availabilityParams}
+              slots={daySlots}
+              isLoading={daySlotsLoading}
             />
           </section>
         </>
@@ -381,22 +492,36 @@ export const BookingWizard = ({ business }: BookingWizardProps) => {
                   error={errors.name}
                   onChange={updateCustomerField('name')}
                 />
+                <div>
+                  <FormField
+                    id="phone"
+                    label="Phone"
+                    type="tel"
+                    required
+                    value={customerData.phone}
+                    error={errors.phone}
+                    onChange={updateCustomerField('phone')}
+                  />
+                  <p className="text-xs text-(--gray-10) mt-1.5 flex items-center gap-1">
+                    <Phone className="w-3 h-3" />
+                    So we can reach you if anything changes with your appointment.
+                  </p>
+                </div>
                 <FormField
                   id="email"
                   label="Email"
                   type="email"
-                  value={customerData.email || ''}
+                  required
+                  value={customerData.email}
                   error={errors.email}
                   onChange={updateCustomerField('email')}
                 />
-                <FormField
-                  id="phone"
-                  label="Phone"
-                  type="tel"
-                  value={customerData.phone || ''}
-                  error={errors.phone}
-                  onChange={updateCustomerField('phone')}
-                />
+
+                {submitError && (
+                  <p className="text-sm text-(--red-9) bg-(--red-2) border border-(--red-6) rounded-(--radius-2) px-3 py-2">
+                    {submitError}
+                  </p>
+                )}
 
                 <div className="flex gap-3">
                   <Button
@@ -416,7 +541,7 @@ export const BookingWizard = ({ business }: BookingWizardProps) => {
                     className="flex-1"
                     disabled={isSubmitting}
                   >
-                    {isSubmitting ? 'Sending code...' : 'Continue'}
+                    {isSubmitting ? 'Reserving your spot...' : 'Confirm booking'}
                   </Button>
                 </div>
               </form>
@@ -425,121 +550,93 @@ export const BookingWizard = ({ business }: BookingWizardProps) => {
         </>
       )}
 
-      {/* Step 5: Verify Email/Phone */}
-      {currentStep === 'verify' && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Mail className="w-5 h-5" />
-              Check your {customerData.email ? 'email' : 'phone'}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <p className="text-sm text-(--gray-11)">
-              We sent a 6-digit confirmation code to{' '}
-              <strong>{getVerificationTarget()}</strong>. Enter it below to complete your
-              booking.
-            </p>
-
-            <div className="bg-(--gray-3) p-4 rounded-(--radius-3) text-sm">
-              <p className="font-medium mb-1">Demo Mode</p>
-              <p className="text-(--gray-11)">
-                Your verification code is: <code className="font-mono font-bold text-(--accent-11)">{verificationCodeSent}</code>
+      {/* Step 5: Verify Code */}
+      {currentStep === 'verify' && selectedService && selectedDate && selectedTime && (
+        <>
+          <BookingSummaryCard
+            service={selectedService}
+            date={selectedDate}
+            time={selectedTime}
+          />
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <ShieldCheck className="w-5 h-5" />
+                Confirm your booking
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-(--gray-11) mb-4">
+                We sent a confirmation code to your email. Enter it below to finalise your booking.
               </p>
-            </div>
+              <form onSubmit={handleVerifySubmit} className="space-y-4">
+                <FormField
+                  id="verifyCode"
+                  label="Confirmation code"
+                  type="text"
+                  required
+                  value={verifyCode}
+                  error={verifyError ?? undefined}
+                  onChange={setVerifyCode}
+                  autoComplete="one-time-code"
+                  inputMode="numeric"
+                />
 
-            <div>
-              <label htmlFor="verificationCode" className="block text-sm font-medium mb-2">
-                Verification Code
-              </label>
-              <input
-                type="text"
-                id="verificationCode"
-                value={verificationInput}
-                onChange={(e) => setVerificationInput(e.target.value)}
-                className="w-full px-4 py-3 border border-(--gray-6) rounded-(--radius-2) bg-(--gray-1) text-(--gray-12) text-center text-lg tracking-widest font-mono focus:outline-none focus:ring-2 focus:ring-(--accent-8)"
-                placeholder="000000"
-                maxLength={6}
-              />
-              {verificationError && (
-                <p className="text-sm text-(--red-9) mt-2">{verificationError}</p>
-              )}
-            </div>
-
-            <div className="flex gap-3">
-              <Button
-                variant="outline"
-                size="lg"
-                onClick={handleResendCode}
-                className="flex-1"
-              >
-                Resend code
-              </Button>
-              <Button
-                variant="solid"
-                size="lg"
-                onClick={handleVerifyCode}
-                className="flex-1"
-                disabled={verificationInput.length !== 6}
-              >
-                Verify
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+                <Button
+                  type="submit"
+                  variant="solid"
+                  size="lg"
+                  className="w-full"
+                  disabled={isVerifying || verifyCode.trim().length === 0}
+                >
+                  {isVerifying ? 'Verifying...' : 'Verify and book'}
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+        </>
       )}
 
-      {/* Step 6: Success */}
+      {/* Success */}
       {currentStep === 'success' && selectedService && selectedDate && selectedTime && (
         <Card className="border-(--accent-6) bg-(--accent-2)">
-          <CardContent className="pt-6 space-y-6">
+          <CardContent className="pt-8 pb-8 space-y-6">
             <div className="text-center">
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-(--radius-full) bg-(--accent-3) mb-4">
                 <Check className="w-8 h-8 text-(--accent-11)" />
               </div>
-              <h2 className="text-2xl font-bold text-(--gray-12) mb-2">Booking confirmed!</h2>
+              <h2 className="text-2xl font-bold text-(--gray-12) mb-2">You&apos;re all set</h2>
               <p className="text-(--gray-11)">
-                Your appointment has been successfully booked.
+                Your appointment at {business.name} is confirmed. We&apos;ll see you there.
               </p>
             </div>
 
-            <div className="bg-(--gray-1) border border-(--gray-6) rounded-(--radius-3) p-4 space-y-3">
-              <h3 className="font-semibold text-(--gray-12)">Booking Details</h3>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-(--gray-11)">Service:</span>
-                  <span className="font-medium">{selectedService.name}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-(--gray-11)">Date:</span>
-                  <span className="font-medium">
-                    {format(parse(selectedDate, 'yyyy-MM-dd', new Date()), 'EEEE, MMMM d, yyyy')}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-(--gray-11)">Time:</span>
-                  <span className="font-medium">{selectedTime}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-(--gray-11)">Duration:</span>
-                  <span className="font-medium">{formatDuration(selectedService.durationMin)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-(--gray-11)">Price:</span>
-                  <span className="font-medium">{formatPrice(selectedService.priceCents)}</span>
-                </div>
+            <div className="bg-(--gray-1) border border-(--gray-6) rounded-(--radius-3) p-4 space-y-2 text-sm">
+              <div className="flex justify-between">
+                <span className="text-(--gray-11)">Service</span>
+                <span className="font-medium">{selectedService.name}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-(--gray-11)">Date</span>
+                <span className="font-medium">
+                  {format(parse(selectedDate, 'yyyy-MM-dd', new Date()), 'EEEE, MMMM d')}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-(--gray-11)">Time</span>
+                <span className="font-medium">{selectedTime}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-(--gray-11)">Duration</span>
+                <span className="font-medium">{formatDuration(selectedService.durationMin)}</span>
+              </div>
+              <div className="flex justify-between border-t border-(--gray-6) pt-2 mt-2">
+                <span className="text-(--gray-11)">Price</span>
+                <span className="font-semibold">{formatPrice(selectedService.priceCents)}</span>
               </div>
             </div>
 
             <div className="space-y-3">
-              <Button
-                variant="solid"
-                size="lg"
-                className="w-full"
-                onClick={() => router.push(`/${business.slug}/manage/${bookingToken}`)}
-              >
-                Manage booking
-              </Button>
               <Button
                 variant="outline"
                 size="lg"
@@ -550,7 +647,7 @@ export const BookingWizard = ({ business }: BookingWizardProps) => {
                 Add to calendar
               </Button>
               <Button
-                variant="ghost"
+                variant="solid"
                 size="lg"
                 className="w-full"
                 onClick={() => router.push(`/${business.slug}`)}
@@ -565,19 +662,21 @@ export const BookingWizard = ({ business }: BookingWizardProps) => {
   )
 }
 
-// Helper Components
+// ── Helper Components ───────────────────────────────────
 
 type FormFieldProps = {
-  id: keyof CustomerInput
+  id: string
   label: string
   type: string
   required?: boolean
   value: string
   error?: string
   onChange: (value: string) => void
+  autoComplete?: string
+  inputMode?: 'text' | 'numeric' | 'tel' | 'email'
 }
 
-const FormField = ({ id, label, type, required, value, error, onChange }: FormFieldProps) => (
+const FormField = ({ id, label, type, required, value, error, onChange, autoComplete, inputMode }: FormFieldProps) => (
   <div>
     <label htmlFor={id} className="block text-sm font-medium text-(--gray-12) mb-1">
       {label} {required && <span className="text-(--accent-11)">*</span>}
@@ -589,6 +688,8 @@ const FormField = ({ id, label, type, required, value, error, onChange }: FormFi
       onChange={(e) => onChange(e.target.value)}
       className="w-full px-3 py-2 border border-(--gray-6) rounded-(--radius-2) bg-(--gray-1) text-(--gray-12) focus:outline-none focus:ring-2 focus:ring-(--accent-8)"
       required={required}
+      autoComplete={autoComplete}
+      inputMode={inputMode}
     />
     {error && <p className="text-sm text-(--red-9) mt-1">{error}</p>}
   </div>
@@ -660,15 +761,17 @@ const BookingSummaryCard = ({
   service: Service
   date: string
   time: string
-  onEdit: () => void
+  onEdit?: () => void
 }) => (
   <Card>
     <CardHeader>
       <CardTitle className="flex items-center justify-between">
         <span>Booking Summary</span>
-        <Button variant="ghost" size="sm" onClick={onEdit}>
-          Edit
-        </Button>
+        {onEdit && (
+          <Button variant="ghost" size="sm" onClick={onEdit}>
+            Edit
+          </Button>
+        )}
       </CardTitle>
     </CardHeader>
     <CardContent className="space-y-3">

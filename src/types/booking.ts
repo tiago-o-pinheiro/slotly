@@ -2,8 +2,8 @@ export type BookingStatus = 'confirmed' | 'cancelled' | 'completed'
 
 export type BookingCustomer = {
   name: string
-  email?: string
-  phone?: string
+  email: string
+  phone: string
 }
 
 export type Booking = {

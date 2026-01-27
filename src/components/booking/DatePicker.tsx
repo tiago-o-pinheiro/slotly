@@ -2,14 +2,14 @@
 
 import { DayPicker } from 'react-day-picker'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { format, parse, addDays, startOfDay, isToday } from 'date-fns'
-import type { AvailabilityParams } from '@/lib/availability'
-import { computeAvailableDays } from '@/lib/availability'
+import { format, parse, addDays, startOfDay } from 'date-fns'
+import { Skeleton } from '@/components/ui/skeleton/Skeleton'
 
 type DatePickerProps = {
   selectedDate: string | null
   onDateSelect: (dateIso: string) => void
-  availabilityParams: AvailabilityParams
+  availableDays: string[]
+  isLoading?: boolean
   disabled?: boolean
   timezone?: string
 }
@@ -36,16 +36,14 @@ const dayPickerClassNames = {
   hidden: 'invisible',
 }
 
-
 export const DatePicker = ({
   selectedDate,
   onDateSelect,
-  availabilityParams,
+  availableDays,
+  isLoading = false,
   disabled = false,
   timezone = 'GMT+1',
 }: DatePickerProps) => {
-  const availableDays = computeAvailableDays(availabilityParams, 30)
-
   const availableDates = availableDays.map((dateIso) =>
     parse(dateIso, 'yyyy-MM-dd', new Date())
   )
@@ -55,7 +53,7 @@ export const DatePicker = ({
     : undefined
 
   const today = startOfDay(new Date())
-  const maxDate = addDays(today, 30)
+  const maxDate = addDays(today, 60)
 
   const handleDayClick = (day: Date | undefined) => {
     if (!day || disabled) return
@@ -66,6 +64,22 @@ export const DatePicker = ({
   const isDateDisabled = (date: Date): boolean => {
     const dateIso = format(date, 'yyyy-MM-dd')
     return !availableDays.includes(dateIso)
+  }
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <h2 className="text-2xl font-bold text-(--gray-12)">Select a date</h2>
+        <div className="space-y-3">
+          <Skeleton className="h-10 w-48 mx-auto" />
+          <div className="grid grid-cols-7 gap-1">
+            {Array.from({ length: 35 }).map((_, i) => (
+              <Skeleton key={i} className="h-10 w-10 rounded-full mx-auto" />
+            ))}
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (

@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import { fetchBusinessBySlug } from '@/lib/business'
-import { validateTheme, getFontClass } from '@/lib/theme'
+import { validateTheme, getFontClass, themeToStyleVars } from '@/lib/theme'
 
 type TenantLayoutProps = {
   children: React.ReactNode
@@ -17,19 +17,10 @@ const TenantLayout = async ({ children, params }: TenantLayoutProps) => {
 
   const validatedTheme = validateTheme(business.theme)
   const fontClass = getFontClass(validatedTheme)
-
-  const cssVars = {
-    '--primary': validatedTheme.colors.primary,
-    '--background': validatedTheme.colors.background,
-    '--foreground': validatedTheme.colors.foreground,
-    '--surface': validatedTheme.colors.surface,
-    '--border': validatedTheme.colors.border,
-    '--muted': validatedTheme.colors.muted,
-    '--radius': validatedTheme.radius,
-  } as React.CSSProperties
+  const styleVars = themeToStyleVars(validatedTheme)
 
   return (
-    <div className={fontClass} style={cssVars}>
+    <div className={fontClass} style={styleVars}>
       {children}
     </div>
   )

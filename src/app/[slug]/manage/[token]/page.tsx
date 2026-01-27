@@ -23,7 +23,7 @@ import {
   DialogTrigger,
   DialogClose,
 } from '@/components/ui/dialog'
-import { formatPrice, formatDuration } from '@/lib/format'
+import { formatPrice, formatDuration, formatICSDate } from '@/lib/format'
 
 const ManageBookingPage = () => {
   const params = useParams()
@@ -79,10 +79,6 @@ const ManageBookingPage = () => {
 
     const startDate = new Date(booking.startAtIso)
     const endDate = new Date(startDate.getTime() + service.durationMin * 60000)
-
-    const formatICSDate = (date: Date): string => {
-      return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z'
-    }
 
     const icsContent = [
       'BEGIN:VCALENDAR',

@@ -8,7 +8,6 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Header } from '@/components/widgets/header'
 import { ServicesAccordion } from '@/components/landing/ServicesAccordion'
-import { WorkingHoursSection } from '@/components/landing/WorkingHoursSection'
 import { StickyCta } from '@/components/landing/StickyCta'
 import { GallerySection } from '@/components/landing/GallerySection'
 import { AboutSection } from '@/components/landing/AboutSection'
@@ -221,13 +220,20 @@ const BusinessPage = async ({ params }: BusinessPageProps) => {
           <div className="flex flex-col md:flex-row gap-4">
             {business.reviews.map((review) => (
               <div key={review.id} className="bg-(--gray-3) p-4 rounded-(--radius-4) relative flex-1">
-                <div className="absolute top-4 right-4 text-(--gray-6) text-4xl leading-none">"</div>
-                <div className="flex gap-1 text-(--amber-9) mb-2">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-4 h-4 fill-current" />
+                <div className="absolute top-4 right-4 text-(--gray-6) text-4xl leading-none">&ldquo;</div>
+                <div className="flex gap-0.5 mb-2">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <Star
+                      key={star}
+                      className={`w-4 h-4 ${
+                        star <= review.rating
+                          ? 'fill-(--amber-9) text-(--amber-9)'
+                          : 'text-(--gray-6)'
+                      }`}
+                    />
                   ))}
                 </div>
-                <p className="text-sm text-(--gray-11) font-medium italic mb-3">"{review.quote}"</p>
+                <p className="text-sm text-(--gray-11) font-medium italic mb-3">&ldquo;{review.quote}&rdquo;</p>
                 <span className="text-xs font-bold text-(--gray-12)">— {review.author}</span>
               </div>
             ))}

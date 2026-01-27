@@ -9,8 +9,8 @@ import { createBooking } from '@/lib/bookingStore'
 
 const customerSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
-  email: z.string().email('Invalid email address').optional().or(z.literal('')),
-  phone: z.string().optional(),
+  email: z.string().min(1, 'Email is required').email('Please enter a valid email address'),
+  phone: z.string().min(6, 'Please enter a valid phone number'),
 })
 
 type CustomerInput = z.infer<typeof customerSchema>
@@ -79,8 +79,8 @@ export const BookingConfirmForm = ({ businessId, businessSlug, serviceId }: Book
         serviceId,
         {
           name: validated.name,
-          email: validated.email || undefined,
-          phone: validated.phone || undefined,
+          email: validated.email,
+          phone: validated.phone,
         },
         startDate.toISOString(),
       )
@@ -120,7 +120,8 @@ export const BookingConfirmForm = ({ businessId, businessSlug, serviceId }: Book
             id="email"
             label="Email"
             type="email"
-            value={formData.email || ''}
+            required
+            value={formData.email}
             error={errors.email}
             onChange={updateField('email')}
           />
@@ -128,7 +129,8 @@ export const BookingConfirmForm = ({ businessId, businessSlug, serviceId }: Book
             id="phone"
             label="Phone"
             type="tel"
-            value={formData.phone || ''}
+            required
+            value={formData.phone}
             error={errors.phone}
             onChange={updateField('phone')}
           />

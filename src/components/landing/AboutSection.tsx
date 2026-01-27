@@ -12,7 +12,7 @@ const BulletPoint = () => (
   </div>
 )
 
-export const AboutSection = ({ about, businessName, highlights }: AboutSectionProps) => {
+export const AboutSection = ({ about, highlights }: AboutSectionProps) => {
   if (!about || (!about.title && !about.description)) {
     return null
   }

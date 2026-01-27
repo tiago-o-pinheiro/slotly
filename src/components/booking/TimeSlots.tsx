@@ -1,47 +1,34 @@
 'use client'
 
-import { useState, useEffect } from 'react'
 import { format, parse } from 'date-fns'
 import { Button } from '@/components/ui/button/Button'
 import { Skeleton } from '@/components/ui/skeleton/Skeleton'
-import { computeSlotsForDay, type AvailabilityParams, type Slot } from '@/lib/availability'
+import type { TimeSlot } from '@/lib/api/types'
 
 type TimeSlotsProps = {
-  selectedDate: string // YYYY-MM-DD format
-  selectedTime: string | null // HH:mm format
+  selectedDate: string // YYYY-MM-DD
+  selectedTime: string | null // HH:mm
   onTimeSelect: (time: string) => void
   onBackToDate: () => void
-  availabilityParams: AvailabilityParams
+  slots: TimeSlot[]
+  isLoading?: boolean
 }
 
-/**
- * TimeSlots component displays available time slots for a selected date.
- * Renders slots in a responsive grid with loading and empty states.
- */
+/** Format "14:30" → "2:30 PM" */
+const formatSlotLabel = (time: string): string => {
+  const [h, m] = time.split(':').map(Number)
+  const d = new Date(2000, 0, 1, h, m)
+  return format(d, 'h:mm a')
+}
+
 export const TimeSlots = ({
   selectedDate,
   selectedTime,
   onTimeSelect,
   onBackToDate,
-  availabilityParams,
+  slots,
+  isLoading = false,
 }: TimeSlotsProps) => {
-  const [slots, setSlots] = useState<Slot[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-
-  useEffect(() => {
-    const loadSlots = async () => {
-      setIsLoading(true)
-      // Simulate slight delay for better UX (shows loading state briefly)
-      await new Promise((resolve) => setTimeout(resolve, 200))
-      const computedSlots = computeSlotsForDay(availabilityParams, selectedDate)
-      setSlots(computedSlots)
-      setIsLoading(false)
-    }
-
-    loadSlots()
-  }, [selectedDate, availabilityParams])
-
-  // Format the selected date for display
   const formattedDate = format(
     parse(selectedDate, 'yyyy-MM-dd', new Date()),
     'EEEE, MMMM d, yyyy'
@@ -90,18 +77,17 @@ export const TimeSlots = ({
       </div>
       <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2">
         {slots.map((slot) => {
-          const slotTime = format(new Date(slot.startAtIso), 'HH:mm')
-          const isSelected = selectedTime === slotTime
+          const isSelected = selectedTime === slot.startTime
 
           return (
             <Button
-              key={slot.startAtIso}
+              key={slot.startTime}
               variant={isSelected ? 'solid' : 'outline'}
               size="sm"
-              onClick={() => onTimeSelect(slotTime)}
+              onClick={() => onTimeSelect(slot.startTime)}
               className="w-full"
             >
-              {slot.label}
+              {formatSlotLabel(slot.startTime)}
             </Button>
           )
         })}

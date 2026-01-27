@@ -84,7 +84,7 @@ export const markBookingStatus = (token: string, status: BookingStatus): boolean
 export const createBooking = (
   businessId: string,
   serviceId: string,
-  customer: { name: string; email?: string; phone?: string },
+  customer: { name: string; email: string; phone: string },
   startAtIso: string,
 ): Booking => {
   const booking: Booking = {

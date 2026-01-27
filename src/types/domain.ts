@@ -19,6 +19,7 @@ export type ReviewSnippet = {
   id: string
   quote: string
   author: string
+  rating: number
 }
 
 export type Address = {

@@ -37,7 +37,7 @@ const RootLayout = ({ children }: RootLayoutProps) => {
       <body className="antialiased">
         <Theme accentColor="amber" grayColor="sand" radius="large" scaling="100%">
           {children}
-          {process.env.NODE_ENV === 'development' && <ThemePanel />}
+          {/* {process.env.NODE_ENV === 'development' && <ThemePanel />} */}
         </Theme>
       </body>
     </html>

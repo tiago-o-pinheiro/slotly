@@ -31,72 +31,58 @@ const getNextWeekdayDateIso = (weekday: number, time: string): string => {
 
 /**
  * Mock bookings to demonstrate availability conflicts in the calendar.
- * These bookings are used by the availability engine to exclude occupied time slots.
- *
- * Note: In production, these would come from a database/API.
+ * Uses backend-aligned UUIDs for Claudio's Barber.
  */
 export const mockBookings: Booking[] = [
-  // Claudio's Barber - Monday bookings
   {
     token: 'MOCK001ABCDEF123',
-    businessId: 'biz_claudio_barber',
-    serviceId: 'haircut',
+    businessId: 'b6f7e7e0-0000-4000-8000-000000000001',
+    serviceId: 'b6f7e7e0-0000-4000-8000-000000000101',
     customer: {
       name: 'Marco Rossi',
       email: 'marco@example.com',
+      phone: '+34 600 000 111',
     },
-    startAtIso: getNextWeekdayDateIso(1, '10:00'), // Monday 10:00
+    startAtIso: getNextWeekdayDateIso(1, '10:00'),
     status: 'confirmed',
     createdAtIso: new Date().toISOString(),
   },
   {
     token: 'MOCK002ABCDEF456',
-    businessId: 'biz_claudio_barber',
-    serviceId: 'beard-trim',
+    businessId: 'b6f7e7e0-0000-4000-8000-000000000001',
+    serviceId: 'b6f7e7e0-0000-4000-8000-000000000102',
     customer: {
       name: 'Luca Bianchi',
+      email: 'luca@example.com',
       phone: '+34 600 111 222',
     },
-    startAtIso: getNextWeekdayDateIso(1, '14:30'), // Monday 14:30
+    startAtIso: getNextWeekdayDateIso(1, '14:30'),
     status: 'confirmed',
     createdAtIso: new Date().toISOString(),
   },
-  // Claudio's Barber - Wednesday bookings
   {
     token: 'MOCK003ABCDEF789',
-    businessId: 'biz_claudio_barber',
-    serviceId: 'haircut-beard',
+    businessId: 'b6f7e7e0-0000-4000-8000-000000000001',
+    serviceId: 'b6f7e7e0-0000-4000-8000-000000000102',
     customer: {
       name: 'Giuseppe Verde',
       email: 'giuseppe@example.com',
       phone: '+34 600 333 444',
     },
-    startAtIso: getNextWeekdayDateIso(3, '11:00'), // Wednesday 11:00
+    startAtIso: getNextWeekdayDateIso(3, '11:00'),
     status: 'confirmed',
     createdAtIso: new Date().toISOString(),
   },
-  // Claudio's Barber - Friday bookings
   {
     token: 'MOCK004ABCDEFABC',
-    businessId: 'biz_claudio_barber',
-    serviceId: 'haircut',
+    businessId: 'b6f7e7e0-0000-4000-8000-000000000001',
+    serviceId: 'b6f7e7e0-0000-4000-8000-000000000101',
     customer: {
       name: 'Antonio Nero',
       email: 'antonio@example.com',
-    },
-    startAtIso: getNextWeekdayDateIso(5, '09:00'), // Friday 09:00
-    status: 'confirmed',
-    createdAtIso: new Date().toISOString(),
-  },
-  {
-    token: 'MOCK005ABCDEFXYZ',
-    businessId: 'biz_claudio_barber',
-    serviceId: 'beard-trim',
-    customer: {
-      name: 'Stefano Giallo',
       phone: '+34 600 555 666',
     },
-    startAtIso: getNextWeekdayDateIso(5, '16:00'), // Friday 16:00
+    startAtIso: getNextWeekdayDateIso(5, '09:00'),
     status: 'confirmed',
     createdAtIso: new Date().toISOString(),
   },

@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/classNames'
 
-type HeaderVariant = 'landing' | 'booking' | 'simple'
+type _HeaderVariant = 'landing' | 'booking' | 'simple'
 
 type BaseHeaderProps = {
   className?: string

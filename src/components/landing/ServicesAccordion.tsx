@@ -21,8 +21,6 @@ export const ServicesAccordion = ({ services, businessSlug }: ServicesAccordionP
 
   useEffect(() => {
     if (serviceParam && !hasScrolled.current) {
-      setOpenValue(serviceParam)
-
       const element = document.getElementById(`service-${serviceParam}`)
       if (element) {
         requestAnimationFrame(() => {

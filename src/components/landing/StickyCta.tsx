@@ -9,7 +9,7 @@ type StickyCtaProps = {
   businessName: string
 }
 
-export const StickyCta = ({ businessSlug, businessName }: StickyCtaProps) => {
+export const StickyCta = ({ businessSlug }: StickyCtaProps) => {
   const [isVisible, setIsVisible] = useState(false)
 
   useEffect(() => {
@@ -41,7 +41,7 @@ export const StickyCta = ({ businessSlug, businessName }: StickyCtaProps) => {
           className="w-full"
         >
           <Calendar className="w-5 h-5" />
-          Book Appointment
+          Book now
         </Button>
       </div>
     </div>

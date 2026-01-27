@@ -6,7 +6,7 @@
 import axios from 'axios'
 import type { AxiosError, InternalAxiosRequestConfig } from 'axios'
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:8095'
+const API_BASE = '/api/booking'
 const STORAGE_KEY = 'slotly_session_token'
 
 // ── In-memory token cache ───────────────────────────────

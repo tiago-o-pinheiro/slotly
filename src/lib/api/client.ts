@@ -6,6 +6,13 @@
  */
 
 import api from './axios'
+import {
+  MonthAvailabilityResponseSchema,
+  DayAvailabilityResponseSchema,
+  LockResponseSchema,
+  ConfirmResponseSchema,
+  VerifyResponseSchema,
+} from './schemas'
 import type {
   MonthAvailabilityParams,
   MonthAvailabilityResponse,
@@ -48,7 +55,7 @@ export const getMonthAvailability = async (
       },
     },
   )
-  return data
+  return MonthAvailabilityResponseSchema.parse(data)
 }
 
 /** Day-level availability: concrete time slots for a date. */
@@ -62,7 +69,7 @@ export const getDayAvailability = async (
       date: params.date,
     },
   })
-  return data
+  return DayAvailabilityResponseSchema.parse(data)
 }
 
 /** Lock a time slot (5-minute TTL). Must be called before confirm. */
@@ -70,7 +77,7 @@ export const lockAppointment = async (
   body: LockRequest,
 ): Promise<LockResponse> => {
   const { data } = await api.post<LockResponse>('/appointments/lock', body)
-  return data
+  return LockResponseSchema.parse(data)
 }
 
 /** Confirm a locked appointment with customer details. */
@@ -81,7 +88,7 @@ export const confirmAppointment = async (
     '/appointments/confirm',
     body,
   )
-  return data
+  return ConfirmResponseSchema.parse(data)
 }
 
 /** Verify appointment with the emailed confirmation code. */
@@ -92,7 +99,7 @@ export const verifyAppointment = async (
     '/appointments/verify',
     body,
   )
-  return data
+  return VerifyResponseSchema.parse(data)
 }
 
 export { BookingApiError }
